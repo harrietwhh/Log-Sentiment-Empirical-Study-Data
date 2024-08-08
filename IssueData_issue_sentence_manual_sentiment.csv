@@ -1,0 +1,1800 @@
+Filename,Sentence,Manual-Sentiment
+AMQ-3176,"End result is lots of connections that are taking too long to shutdown and in particular:  where there is an overlap, with two connections trying to stop each other..",0
+AMQ-3176,"In particular,",0
+AMQ-3176,"It tries to stop the existing connection but does it in a sync call so the potential to block and lock is present.. 2011-01-26 16:35:54,618 [..] INFO TransportConnection - The connection to '/xx:51585' is taking a long time to shutdown.. 2011-01-26 16:35:56,500 [..] INFO TransportConnection - The connection to '/xx:51585' is taking a long time to shutdown.{code}.",-1
+AMQ-3176,Problem appears when the initiator of a duplex network connector sees a failure and trys to reconnect and the responder sees the old transport connector in place.,0
+AMQ-3251,Here is the config used to access to AMQ Broker,0
+AMQ-3251,The following error is generated when trying to configure ActiveMQ with JTA/XA.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,.,0
+AMQ-3567,A patch will be added to this issue.,0
+AMQ-3567,Here is the stack trace of the call that is causing the interrupt.,0
+AMQ-3567,I was able to create a testcase that reproduces this issue.,0
+AMQ-3567,Subsequent testing with this change does not cause the interrupt exception.,0
+AMQ-3567,The current process generates the following interrupt exception.,0
+AMQ-3567,The problem is that the calling thread is part of the ASYNC_TASKS executor and therefore it is generating the interrupt exception.,0
+AMQ-3567,The process that activemq uses to check if there has been inactivity for a connection has a flaw when it tries to close the connection because of inactivity.,0
+AMQ-3567,The solution is to replace the shutdownNow method call with shutdown.,0
+AMQ-3567,The test will pass either way.,0
+AMQ-3567,"The testcase uses the useInactivityMonitor=false attribute to reproduce this issue, thanks Gary for the hint.",1
+AMQ-3567,This call causes the executor to call the interrupt method for all active threads in the executor.,0
+AMQ-3567,This is caused because the spawned thread in the AbstractInactivityMonitor classes readCheck method calls the onException method.,0
+AMQ-3567,This method will then call the stopMonitorThreads method which subsequently calls the shutdownNow method of the ASYNC_TASKS executor.,0
+AMQ-3567,Unfortunately there aren't any steps that I can use to determine that the raised interrupted exception was raised or not.,-1
+AMQ-4186,The duplicate contentyType directive seems to only error out with the current jsp compiler.,0
+AMQ-4186,with the latest dependencies we get:.,0
+AMQ-4369,"It is possible to get an IOException before the current default handler is installed, so it is bypassed.",0
+AMQ-4369,It needs to be set earlier.,0
+AMQ-4411,Adding a '*' clause to <Bundle-NativeCode> sorts this.,0
+AMQ-4411,"But also, it allows the bundle to used with the default store where there are no native deps at all.",0
+AMQ-4411,levelDB will fallback to the java impl in cases where the jni deps are not found.,0
+AMQ-4411,When the bundle is used on a platform where we don't have native libs we fail with:.,0
+AMQ-4576,Code example:.,0
+AMQ-4576,On the server shows the following messages:.,0
+AMQ-4576,"The test failed when using the current fusesource client (1.5) on ActiveMQ 5.9, on Mosquitto mqtt the code works correctly.",-1
+AMQ-4576,When more than one topic is supplied to BlockingConnection.subscribe the BlockingConnection.receive fails and the following exception is thrown:.,0
+AMQ-5141,.,0
+AMQ-5141,.,0
+AMQ-5141,.,-1
+AMQ-5141,.,0
+AMQ-5141,[1].,0
+AMQ-5141,"As this may happen with any other client, all client users will require write access to ActiveMQ.DLQ, which may not be appropriate from a security point of view.",-1
+AMQ-5141,If messages are to be expired they get sent to ActiveMQ.DLQ by default.,0
+AMQ-5141,If the broker handles a RemoveInfo command it may also kick off a message expiry check for (I presume) any prefetched messages.,-1
+AMQ-5141,If the broker is security enabled with authorization turned on and messages get sent to DLQ as a result of the expiry check then the broker uses the client's security context when sending the messages to DLQ.,0
+AMQ-5141,In my opinion this same broker internal security context should be used when expiring messages as part of the RemoveInfo command.,0
+AMQ-5141,See stack trace in next comment..,0
+AMQ-5141,The broker regularly runs an expiry check and uses a broker internal security context for this task.,0
+AMQ-5141,The broker should not use the client's security context.,-1
+AMQ-5141,The current behavior can raise the following SecurityException if the client user does not have write access to ActiveMQ.DLQ,0
+AMQ-5141,This implies the client user needs to have write access to ActiveMQ.DLQ.,0
+AMQ-5300,And I see the remaining files in the data store folder (notice the 0000000000000000.log is gone):.,0
+AMQ-5300,"At this point, I shut down the broker and here is the listing of what's left in the data store:.",0
+AMQ-5300,"Configure ActiveMQ 5.10.0 to use a LevelDB data store with the log size of about 1MB.. Then I started up the broker and published 10,000 persistent messages to a queue, causing the log files to rotate (twice in my case).",0
+AMQ-5300,Here are the steps to reproduce what I am seeing:.,0
+AMQ-5300,"However, if a log rotation has already occurred, you will get an infinite loop upon restart..",-1
+AMQ-5300,"I am doing this to force a replay of the logs to regenerate the index (due to the serialization issue I ran into).. And finally, this is the message I am getting once I start the broker back up (infinite loop of this same message, and I have to shut down the broker):",0
+AMQ-5300,I see the following files in the data store folder:.,0
+AMQ-5300,I see the following log statements:.,0
+AMQ-5300,"I then consume 5,000 messages, which causes the first log to be deleted since it is no longer being referenced.",0
+AMQ-5300,I then delete the index folder within the data store (in my case "0000000000301737.index").,0
+AMQ-5300,This will replay the logs to regenerate the index.,0
+AMQ-5300,"While searching for a workaround for issue AMQ-5284, I came across this issue.. To work around the serialization issue (AMQ-5284), I deleted the index snapshots from the LevelDB datastore.",0
+AMQ-5384,AMQ 5.9 gets stuck under 30-50 req/second load when using JDBC persistence - this affects our application as it hangs during performance testing (this happens almost every night)..,-1
+AMQ-5384,"Call to {{removeMessage}} already has one DB connection passed in {{context}} method parameter, but calling {{persistenceAdapter.getStoreSequenceIdForMessageId}} creates another DB connection in the same transaction..",-1
+AMQ-5384,"Deadlock occurs when all DB connections are used by {{context}}, so that  {{removeMessage}} can't fetch its own connection.. Possible solution would be to pass {{ConnectionContext}} object to {{persistenceAdapter.getStoreSequenceIdForMessageId}} method, so that the method would reuse same connection.",0
+AMQ-5384,Following stack shows the same thread pending for second DB connection (without releasing the first one):.,0
+AMQ-5384,Following stacktraces indicate that there's a deadlock on DB connection:.,0
+AMQ-5384,Problem seems to be related with JDBCMessageStore.removeMessage method:.,0
+AMQ-5384,"Stack logged by C3P0, showing when first DB connection has been picked from the pool:.",0
+AMQ-5525,failures:.,0
+AMQ-5525,root cause - somewhere in blueprint converter.,0
+AMQ-5851,1,0
+AMQ-5851,2,0
+AMQ-5851,3,0
+AMQ-5851,4,0
+AMQ-5851,Enable TTL property for JMS client.,0
+AMQ-5851,Keep TTL value very low say 5 sec.,0
+AMQ-5851,Make sure that some message should expired when they are in MDB means running inside MDB.,0
+AMQ-5851,Send lot of messages so some message will get expired.,0
+AMQ-5851,Steps to reproduce :.,0
+AMQ-5851,Then we will see above error in the logs,0
+AMQ-5851,When lot of messages got expired because of JMS client Time to Live (TTL) property then below error will appear and consumer will freeze.,0
+AMQ-5854,.,0
+AMQ-5854,.,0
+AMQ-5854,.,0
+AMQ-5854,.,0
+AMQ-5854,.,0
+AMQ-5854,An option may be to force rolling back transaction if there is a failover during the prepare phase of commit in ConnectionStateTracker.restoreTransactions().,0
+AMQ-5854,broker : transport.useKeepAlive=false.,0
+AMQ-5854,But one message is not rolled back (the transaction commit) and is also redileverd to another consummer.,-1
+AMQ-5854,client : wireFormat.maxInactivityDuration=5000.,0
+AMQ-5854,"Due to hight CPU usage, the inactity monitor closes connections between clients and broker while 16 messages were processed..                 15 messages are rolled back and redilevered to another consummer..",0
+AMQ-5854,"For this duplicated message, the failover occur during prepare phase of commit :.",0
+AMQ-5854,In the activeMq log we got the message :.,0
+AMQ-5854,In the log we got 15 warnings :.,0
+AMQ-5854,Our analysis :.,0
+AMQ-5854,Problem description :.,0
+AMQ-5854,Question :.,0
+AMQ-5854,So it's processed twice by two different consummers (two inserts in database and two output JMS messages generated) and is not deduplicated..,0
+AMQ-5854,Use case :.,0
+AMQ-5854,We add Thread.sleep in the source code of org.apache.activemq.ActiveMQMessageConsumer to force failover to be done exactly where we think it causes problems :.,0
+AMQ-5854,We are working on our side to find a correction.,0
+AMQ-5854,We think that the duplicate message is caused by the failover during the prepare phase of the commit so we modify the source code to reproduce the case..                 Our modifications in config to produce failovers:.,0
+AMQ-5854,We tried fixes described in https://issues.apache.org/jira/browse/AMQ-5068 and https://issues.apache.org/jira/browse/AMQ-3519 but it doesn閳ユ獩 help to solve our problem..                 Is there a workaround or a config parameter that can help to prevent this problem ?.,-1
+AMQ-5854,"With Spring DMLC, Read a jms message in a queue, produce a jms message in an output queue and write data in database..",0
+AMQ-5854,"With these changes on the configuration and the code, the problem is easily reproduced..                 We also try with transactedIndividualAck=true, and we add a Thread.sleep in the code :.",0
+AMQ-5854,"With these modifications, we still get duplicates messages..                 We think that the problem is that the statement synchronized(deliveredMessages) prevents the call of clearDeliveredList() by another ActiveMQConnection thread that clears messages in progress..                 By adding logs we observe that a thread is waiting deliveredMessages 閳ユΞ lock in clearDeliveredList() method..                 .",-1
+AMQ-6152,.,0
+AMQ-6152,I have also found behavior inconsistent on the log files it does remove.,-1
+AMQ-6152,I have tried to isolate the issue and create a minimal example (attached).,0
+AMQ-6152,"In the troubleshooting I have done, the scheduler GC process is running, it's just deciding not to GC files that it should be.",0
+AMQ-6152,It then consumes all 20 messages.,0
+AMQ-6152,"On all other versions I've tried it always leaves the first 2 files, and sometimes will GC the 3rd.. Below is a snippet from the log of the scheduler process and why it's deciding not to GC these files:.",-1
+AMQ-6152,Something is holding onto KahaDB scheduler log files.,0
+AMQ-6152,"The ran the attached example/test on 5.10.0, 5.11.1, 5.12.0 and 5.13.0.",0
+AMQ-6152,The test schedules 20 messages that are large enough to cause 4 log files to be created.,0
+AMQ-6152,"This issue was originally reported in the Open Source PuppetDB project, ticket [here|https://tickets.puppetlabs.com/browse/PDB-1411].",0
+AMQ-6152,We have reports of up to 400GB of scheduler log files.,0
+AMQ-6152,"When on 5.10.0, it behaves like I would expect, files 1-3 are GC'd and the 4th (the current log file) is left.",0
+AMQ-6262,A regression from https://issues.apache.org/jira/browse/AMQ-5794 ..,0
+AMQ-6262,Connection watchdog is started for every initiated connection and stopped on WireFormatInfo command.,0
+AMQ-6262,HTTP transport doesn't send WireFormatInfo so the watchdog never realises that the connection has been successfully established..,0
+AMQ-6262,"I haven't seen that myself, but I had people reporting that if HTTP transports are in use, it eventually destabilises the broker and affects non-HTTP transports too.",0
+AMQ-6262,"The connection gets terminated every 30seconds by the watchdog.. At the beginning, everything looks fine, but then you start getting exceptions and start losing packets.",-1
+AMQ-6343,"(again, my LWT works when I use a tcp connexion).",0
+AMQ-6343,"i traced the ActiveMQ log, i can see that the disconnection is detected, but i didn't receive my LWT message.",-1
+AMQ-6343,I use several clients from a webapp' connected over a websocket link.. i use a javascript code:.,0
+AMQ-6343,"I use several services, some of them connect over tcp and the LWT works properly..",0
+AMQ-6343,this is my ActiveMQ configuration,0
+AMQ-6451,Empty journal files:.,0
+AMQ-6451,"If the preallocationStrategy is set to 'zeros', ActiveMQ can intermittently become unable to allocate direct buffer memory with the default JVM settings.",0
+AMQ-6451,"In addition to handling this condition, perhaps the default ACTIVEMQ_OPTS_MEMORY settings should configure enough direct memory to allow some multiple of log files to be created near simultaneously, or at least this possibility documented in the KahaDB settings..",-1
+AMQ-6451,lsof output:,0
+AMQ-6451,Relevant logs:.,0
+AMQ-6451,"The exception isn't handled, and ends up both creating an empty journal file and, more importantly, leaking a file descriptor.. ActiveMQ eventually runs out of file descriptors and crashes..",0
+AMQ-6548,"At ear stop jsm connection consumes messages, although there occured exception",-1
+AMQ-6707,It seams that it the same issue as in https://issues.apache.org/jira/browse/AMQ-5567.,0
+AMQ-6707,When ActiveMQ 5.14.5 is configured with jdbc persistence storage (postgres) from time to time below error occurs:.,0
+AMQ-6834,.,0
+AMQ-6834,"From Camel 2.19.x, the camel-spring-dm feature/bundle has been totally removed, that's why the org.apache.camel.osgi.CamelNamespaceHandler couldn't be found anymore.",0
+AMQ-6834,"Start karaf OSGi container, install Camel 2.19.2 and activemq-client feature (activemq-osgi bundle), then the ClassNotFoundException is thrown:.",0
+AMQ-6834,There is still definition above in the spring.handlers of the activemq-osgi bundle.,0
+AMQ-6834,this may need to be removed or updated from spring.handlers.,0
+HADOOP-10142,Reduce the logs generated by ShellBasedUnixGroupsMapping.. For ex: Using WebHdfs from windows generates following log for each request,0
+HADOOP-10468,{{TestMetricsSystemImpl.testMultiThreadedPublish}} can fail intermediately due to the insufficient size of the sink queue:.,0
+HADOOP-10468,The unit test should increase the default queue size to avoid intermediate failure.,0
+HADOOP-10937,Touchz-ing a file results in a Null Pointer Exception,0
+HADOOP-11329,"Currently, HADOOP_HOME isn't part of the start up options of KMS.",0
+HADOOP-11329,"If I add the the following configuration to core-site.xml of kms,.",0
+HADOOP-11329,kms server will throw the following exception when receive "generateEncryptedKey" request.,0
+HADOOP-11329,The reason is that it cannot find libhadoop.so.,0
+HADOOP-11329,This will prevent KMS to response to "generateEncryptedKey" requests.,0
+HADOOP-11693,"Copy blob is very costly in Azure storage and during Azure storage gc, it will be highly likely throttled.",-1
+HADOOP-11693,"Current WASB retry policy is exponential retry, but only last at most for 2min.",-1
+HADOOP-11693,HMaster aborted the region server and tried to restart it..,0
+HADOOP-11693,"However, since the cluster was still being throttled by Azure storage, the upcoming distributed log splitting also failed.",-1
+HADOOP-11693,"One of our customers' production HBase clusters was periodically throttled by Azure storage, when HBase was archiving old WALs.",0
+HADOOP-11693,Short term fix will be adding a more intensive exponential retry when copy blob is throttled.,0
+HADOOP-11693,"Sometimes hbase:meta table was on this region server and finally showed offline, which cause the whole cluster in bad state..",-1
+HADOOP-11693,The throttling by Azure storage usually ends within 15mins.,0
+HADOOP-11693,"When archiving old WALs, WASB will do rename operation by copying src blob to destination blob and deleting the src blob.",0
+HADOOP-11754,RM fails to start in the non-secure mode with the following exception:.,0
+HADOOP-11754,This is likely a regression introduced by HADOOP-10670.,0
+HADOOP-12186,ActiveStandbyElector shouldn't call {{monitorLockNodeAsync}} before StatCallback for previous {{zkClient.exists}} is received.. We saw RM shutdown because ActiveStandbyElector retrying monitorLockNodeAsync exceeded limit.,-1
+HADOOP-12186,So the retry for {{monitorLockNodeAsync}} doesn't work correctly sometimes.,0
+HADOOP-12186,The current code doesn't prevent {{zkClient.exists}} from being called before AsyncCallback.StatCallback for previous {{zkClient.exists}} is received..,0
+HADOOP-12186,"The following is the logs.. Based on the log, it looks like multiple {{monitorLockNodeAsync}} are called at the same time due to back-to-back SyncConnected event received..",0
+HADOOP-12602,I have seen this test failed a few times in the past.. Error Message.,0
+HADOOP-12602,Stacktrace.,0
+HADOOP-12602,Standard Output,0
+HADOOP-12622,"From the code below in RetryInvocationHandler.java, even the retry ends, we don't put warn messages to include how much/many time/ counts we spent on retry logic that make it harder to debug.. We should add failAction.reason as much as we can in multiple retry policies.",-1
+HADOOP-12622,"In addition, we should keep consistent in log level for message during the retry attempts: now the ipc.client is INFO, but RetryInvocationHandler is DEBUG (if not fail_over).",-1
+HADOOP-12622,"In debugging a NM retry connection to RM (non-HA), the NM log during RM down time is very misleading:.",-1
+HADOOP-12622,It actually only log client side retry on NetworkConnection failure but not include any info on RetryInvocationHandler where the real retry policy works.,-1
+HADOOP-12622,We should keep them consistent or it could be very confusing.,-1
+HADOOP-12655,"In the following case, the first server bound to port 53212, and the second one bound to port 53225, which violated the assertion in the test case (the second port is supposed to be no more than the first + 8)",-1
+HADOOP-12655,It also appeared previously in Hadoop-common-trunk-Java8 jenkins on Oct 21..,0
+HADOOP-12655,Saw it in a pre-commit jenkins job https://builds.apache.org/job/PreCommit-HADOOP-Build/8242/testReport/org.apache.hadoop.http/TestHttpServer/testBindAddress/.,0
+HADOOP-1712,.,0
+HADOOP-1712,exception on the datanode :.,0
+HADOOP-1712,One of the un-handled IOException during BlockCRC upgrade results in the upgrade thread to exit with out proper upgrade.,-1
+HADOOP-1712,Will also check if there are any more of such misses.,0
+HADOOP-1717,.,0
+HADOOP-1717,I believe Raghu is working on a patch which will remove the non-standard tar -z dependency.. From Enis Soztutar:.,0
+HADOOP-1717,TestDFSUpgradeFromImage fails for hadoop-patch and hudson-nightly builds on hudson.,0
+HADOOP-1717,TestDFSUpgradeFromImage is broken on Solaris so all patch builds will fail until it is fixed.,0
+HADOOP-1717,The error thrown is :,0
+HADOOP-1955,.,0
+HADOOP-1955,.,0
+HADOOP-1955,[Datanode(one of the receiver) 99.9.99.37 log],0
+HADOOP-1955,[Datanode(sender) 99.9.99.11 log].,0
+HADOOP-1955,Namenode keeps on retrying (with the same source datanode).. Fsck shows those blocks as under-replicated.. [Namenode log].,0
+HADOOP-1955,"When replicating corrupted block, receiving side rejects the block due to checksum error.",0
+HADOOP-2256,I will attach the log.,0
+HADOOP-2256,Part of the log :.,0
+HADOOP-2256,Summery might look like same as HADOOP-2200 but symptoms in log are different and I think the reason is different.,0
+HADOOP-2486,.,0
+HADOOP-2486,.,0
+HADOOP-2486,.,0
+HADOOP-2486,.,0
+HADOOP-2486,.,0
+HADOOP-2486,Both jobs finish successfully.,1
+HADOOP-2486,Could this error be somehow related to my having different # of records?,0
+HADOOP-2486,I ran separate linecount mapred jobs on both the input and the output to see if  the counters are reporting the correct number.,0
+HADOOP-2486,No failed tasks.,0
+HADOOP-2486,No speculative execution.,0
+HADOOP-2486,Note: I'm really not sure if this is a bug in my code or in mapred.,-1
+HADOOP-2486,"Only error stood out in that  reducer userlog is, .",0
+HADOOP-2486,"What's weird to me is, when I rerun my code with exact same input, usually I get an expected #map output recs == #reduce output recs..",-1
+HADOOP-2486,"When I looked at all the 513 reducer counter, I found single reducer with different counts for the two runs.",0
+HADOOP-2486,"With my mapreduce job without combiner,  I sometimes see   # of total Map output records != # of total Reduce input records.",0
+HADOOP-2756,Look to see if the response data method needs to be made volatile (There's a test for null just before we use it on line #2262).,0
+HADOOP-2756,Saw this in logs:.,0
+HADOOP-2814,But there is an NPE in datanode (using branch-0.16) :,-1
+HADOOP-2814,The test passes.,0
+HADOOP-2971,But we have already read a few bytes from it!.,-1
+HADOOP-2971,socket.getRemoteSocketAddress() returned null implying this socket is not connected yet.,0
+HADOOP-2971,TestJobStatusPersistency failed and contained DataNode stacktraces similar to the following :.,0
+HADOOP-2971,The error is strange.,-1
+HADOOP-2971,This is mostly related to HADOOP-2346.,0
+HADOOP-3035,"Currently if a crc error occurs when data-node replicates a block to another node it throws an exception, and continues..",0
+HADOOP-3035,The data-node should report the error to the name-node so that the corrupted replica could be removed and replicated.,0
+HADOOP-3108,"Not sure if this is fixed in later release, but I'm seeing many NPE in the namenode log..",-1
+HADOOP-3108,Permission is disabled on this cluster.,0
+HADOOP-3418,...before this finishes.,0
+HADOOP-3418,{{$ bin/hadoop fs -put largeFile tmp/tmpFile}}.,0
+HADOOP-3418,{{$ bin/hadoop fs -rmr tmp}}.,0
+HADOOP-3418,How to reproduce :.,0
+HADOOP-3418,Now restart NameNode..,0
+HADOOP-3418,Restart fails with :,0
+HADOOP-3576,.,0
+HADOOP-3576,.,0
+HADOOP-3576,"After this, the namespace of /a/b is gone.",0
+HADOOP-3576,"But, restarting now, throws an exception on NameNode and NameNode wouldn't start..",-1
+HADOOP-3576,Consider the example.,0
+HADOOP-3576,hadoop dfs -mv command throws NullPointerException while moving a directory to its subdirecotry.,0
+HADOOP-3576,"In 0.17 version, such a move was not allowed.",0
+HADOOP-3576,"In hadoop 0.17, we never allowed such a move..",0
+HADOOP-3576,Opening this JIRA to fix the underlying problem while HADOOP-3561 could be committed.,0
+HADOOP-3576,"Restarting the namenode recovers this namespace and everything seems to be normal.. On the other hand, before restarting the namenode, if we delete the directory /a, it succeeds.",0
+HADOOP-3576,This is the issue seen with HADOOP-3561.,0
+HADOOP-3635,Datanode was still up and running but no verification.. Jstack didn't show DataBlockScanner.,-1
+HADOOP-3635,I see bunch of datanodes stop verifying local blocks.. ".out" showed .,0
+HADOOP-3635,Namenode log also showed .,0
+HADOOP-5539,.,0
+HADOOP-5539,do not maintain compression setting the writer (o.a.h.mapred.Merger.class line 432).,0
+HADOOP-5539,hadoop-site.xml :.,0
+HADOOP-5539,I added .,0
+HADOOP-5539,I can read the data in .,0
+HADOOP-5539,I can see no benefit for these not maintaining the compression setting and as it looks they where intended to maintain it.,-1
+HADOOP-5539,I have confirmed this with the logging and I have looked at the files on the disk of the tasktracker.,0
+HADOOP-5539,I thank this is just and oversight of the codec not getting set correctly for the on disk merges..,0
+HADOOP-5539,Just before the creation of the writer o.a.h.mapred.Merger.class line 432. and it outputs the second line above..,0
+HADOOP-5539,map output files are compressed but when the in memory merger closes .,-1
+HADOOP-5539,mapred.compress.map.output = true.,0
+HADOOP-5539,on the reduce the on disk merger runs to reduce input files to <= io.sort.factor if needed.,0
+HADOOP-5539,passes the codec but I added some logging and its always null map output compression set true or false..,-1
+HADOOP-5539,telling me the compression is working on the map end but not on the on disk merge that produces the intermediate..,-1
+HADOOP-5539,the intermediate files clearly telling me that there not compressed but I can not read the map.out files direct from the map output.,-1
+HADOOP-5539,This causes task to fail if they can not hold the uncompressed size of the data of the reduce its holding.,0
+HADOOP-5539,when this happens it outputs files called intermediate.x files these .,0
+HADOOP-7629,"JOB_DIR_PERMISSION is an immutable FsPermission which cannot be used in RPC calls, it results in the following exception:",-1
+HADOOP-7629,MAPREDUCE-2289 introduced the following change:.,0
+HADOOP-8721,(sshfence technique configured).,0
+HADOOP-8721,Active NN on machine1.,0
+HADOOP-8721,After zk session timeout ZKFC at machine2 side gets notification that NN1 is not there.. ZKFC tries to failover NN2 as active.. As part of this during fencing it tries to connect to machine1 and kill NN1.,0
+HADOOP-8721,Also after that standby NN is not able to take over as active (because of fencing failure)..,0
+HADOOP-8721,From ZKFC log:,0
+HADOOP-8721,Machine1 is isolated from the network (machine1 network cable unplugged).,0
+HADOOP-8721,Scenario:.,0
+HADOOP-8721,Standby NN on machine2.,0
+HADOOP-8721,Suggestion: If ZKFC is not able to reach other NN for specified time/no of retries it can consider that NN as dead and instruct the other NN to take over as active as there is no chance of the other NN (NN1) retaining its state as active after zk session timeout when its isolated from network.,0
+HADOOP-8721,This connection retry happens for 45 times( as it takes  ipc.client.connect.max.socket.retries).,0
+HADOOP-9865,(See the attached patch.),0
+HADOOP-9865,"From the log and debug, the job failed because we failed to create the Jar with classpath (see code around {{FileUtil.createJarWithClassPath}}) in {{ContainerLaunch}}.",0
+HADOOP-9865,"However, I think the impact is larger.",0
+HADOOP-9865,I discovered the problem when running unit test TestMRJobClient on Windows.,0
+HADOOP-9865,I modified some code and the unit test passed.,0
+HADOOP-9865,I think this is a regression from HADOOP-9817.,0
+HADOOP-9865,"I will add some unit tests to verify the behavior, and work on a more complete fix.",0
+HADOOP-9865,"In the unit test, we try to launch a job and list its status.",0
+HADOOP-9865,The cause is indirect in this case.,0
+HADOOP-9865,"The job failed, and caused the list command get a result of 0, which triggered the unit test assert.",0
+HADOOP-9865,The relevant log looks like the following..,0
+HADOOP-9865,This is a Windows specific step right now; so the test still passes on Linux.,0
+HADOOP-9865,This step failed because we passed in a relative path to {{FileContext.globStatus()}} in {{FileUtil.createJarWithClassPath}}.,0
+HDFS-10512,I observed this bug in a production CDH 5.5.1 cluster and the same bug still persist in upstream trunk..,0
+HDFS-10512,I think the NPE comes from the volume variable in the following code snippet.,0
+HDFS-10512,"Somehow the volume scanner know the volume, but the datanode can not lookup the volume using the block.",-1
+HDFS-10512,This is different from HDFS-8850/HDFS-9190.,0
+HDFS-10512,VolumeScanner may terminate due to unexpected NullPointerException thrown in {{DataNode.reportBadBlocks()}}.,-1
+HDFS-10609,{quote}.,0
+HDFS-10609,{quote}.,0
+HDFS-10609,"2016-07-06 12:12:51,992 ERROR org.apache.solr.update.HdfsTransactionLog: Exception closing tlog.. org.apache.hadoop.hdfs.protocol.datatransfer.InvalidEncryptionKeyException: Can't re-compute encryption key for nonce, since the required block key (keyID=557709482) doesn't exist.",0
+HDFS-10609,"2016-07-06 12:12:51,997 ERROR org.apache.solr.update.CommitTracker: auto commit error...:org.apache.solr.common.SolrException: org.apache.hadoop.hdfs.protocol.datatransfer.InvalidEncryptionKeyException: Can't re-compute encryption key for nonce, since the required block key (keyID=557709482) doesn't exist.",0
+HDFS-10609,at java.lang.Thread.run(Thread.java:745).,0
+HDFS-10609,at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:471).,0
+HDFS-10609,at java.util.concurrent.FutureTask.run(FutureTask.java:262).,0
+HDFS-10609,at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.access$201(ScheduledThreadPoolExecutor.java:178).,0
+HDFS-10609,at java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:292).,0
+HDFS-10609,at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615).,0
+HDFS-10609,at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.addDatanode2ExistingPipeline(DFSOutputStream.java:1272).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.addDatanode2ExistingPipeline(DFSOutputStream.java:1272).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.processDatanodeError(DFSOutputStream.java:1147).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.processDatanodeError(DFSOutputStream.java:1147).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:632).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.run(DFSOutputStream.java:632).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.setupPipelineForAppendOrRecovery(DFSOutputStream.java:1433).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.setupPipelineForAppendOrRecovery(DFSOutputStream.java:1433).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.transfer(DFSOutputStream.java:1308).,0
+HDFS-10609,at org.apache.hadoop.hdfs.DFSOutputStream$DataStreamer.transfer(DFSOutputStream.java:1308).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.checkTrustAndSend(SaslDataTransferClient.java:211).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.checkTrustAndSend(SaslDataTransferClient.java:211).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.doSaslHandshake(SaslDataTransferClient.java:474).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.doSaslHandshake(SaslDataTransferClient.java:474).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.getEncryptedStreams(SaslDataTransferClient.java:299).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.getEncryptedStreams(SaslDataTransferClient.java:299).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.send(SaslDataTransferClient.java:242).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.send(SaslDataTransferClient.java:242).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.socketSend(SaslDataTransferClient.java:183).,0
+HDFS-10609,at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.SaslDataTransferClient.socketSend(SaslDataTransferClient.java:183).,0
+HDFS-10609,at org.apache.solr.update.CommitTracker.run(CommitTracker.java:216).,0
+HDFS-10609,at org.apache.solr.update.DirectUpdateHandler2.commit(DirectUpdateHandler2.java:623).,0
+HDFS-10609,at org.apache.solr.update.TransactionLog.decref(TransactionLog.java:505).,0
+HDFS-10609,at org.apache.solr.update.UpdateLog.addOldLog(UpdateLog.java:380).,0
+HDFS-10609,at org.apache.solr.update.UpdateLog.postCommit(UpdateLog.java:676).,0
+HDFS-10609,"Caused by: org.apache.hadoop.hdfs.protocol.datatransfer.InvalidEncryptionKeyException: Can't re-compute encryption key for nonce, since the required block key (keyID=557709482) doesn't exist.",0
+HDFS-10609,Current key: 1350592619.         at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.DataTransferSaslUtil.readSaslMessageAndNegotiatedCipherOption(DataTransferSaslUtil.java:417).,0
+HDFS-10609,Current key: 1350592619.         at org.apache.hadoop.hdfs.protocol.datatransfer.sasl.DataTransferSaslUtil.readSaslMessageAndNegotiatedCipherOption(DataTransferSaslUtil.java:417).,0
+HDFS-10609,Current key: 1350592619.         at org.apache.solr.update.HdfsTransactionLog.close(HdfsTransactionLog.java:316).,0
+HDFS-10609,"However, if the exception is thrown during pipeline recovery, the corresponding code does not handle it properly, and the exception is spilled out to downstream applications, such as SOLR, aborting its operation:.",-1
+HDFS-10609,"In normal operations, if SASL negotiation fails due to {{InvalidEncryptionKeyException}}, it is typically a benign exception, which is caught and retried :.",0
+HDFS-10609,"This exception should be contained within HDFS, caught and retried just like in {{createBlockOutputStream()}}",0
+HDFS-10760,DataXceiver#run() just log InvalidToken exception as an error..,0
+HDFS-10760,"This is not a server error and the DataXceiver#checkAccess() has already loged the InvalidToken as a warning.. A simple fix by catching the InvalidToken exception in DataXceiver#run(), only keeping the warning logged by DataXceiver#checkAccess() in the DN log.",-1
+HDFS-10760,"When client has an expired token and just refetch a new token, the DN log will has an error like below:.",0
+HDFS-11164,"If the block movement failure(s) are only due to block pinning, then retry is unnecessary.",0
+HDFS-11164,"Since the Mover has {{dfs.mover.retry.max.attempts}} configs, it will continue moving this block until it reaches {{retryMaxAttempts}}.",0
+HDFS-11164,The idea of this jira is to avoid retry attempts of pinned blocks as they won't be able to move to a different node.,0
+HDFS-11164,"When mover is trying to move a pinned block to another datanode, it will internally hits the following IOException and mark the block movement as {{failure}}.",0
+HDFS-11377,{quote}.,0
+HDFS-11377,"2017-01-26 15:36:40,085 WARN org.apache.hadoop.hdfs.server.balancer.Dispatcher: No mover threads available: skip moving blk_13700554102_1112815018180 with size=268435456 from 10.115.67.137:50010:DISK to 10.140.21.55:50010:DISK through 10.115.67.137:50010.",0
+HDFS-11377,"2017-01-26 15:36:40,085 WARN org.apache.hadoop.hdfs.server.balancer.Dispatcher: No mover threads available: skip moving blk_13881956058_1112996460026 with size=133509566 from 10.115.67.137:50010:DISK to 10.140.21.55:50010:DISK through 10.115.67.36:50010.",0
+HDFS-11377,"2017-01-26 15:36:40,085 WARN org.apache.hadoop.hdfs.server.balancer.Dispatcher: No mover threads available: skip moving blk_4009558842_1103118359883 with size=268435456 from 10.115.67.137:50010:DISK to 10.140.21.55:50010:DISK through 10.115.67.137:50010.",0
+HDFS-11377,"In the log, there are lots of WARN about ""No mover threads available"".. {quote}.",0
+HDFS-11377,The stack trace shows it waiting forever like below..,0
+HDFS-11377,"What happened here is, when there are no mover threads available, DDatanode.isPendingQEmpty() will return false, so Balancer hung.",0
+HDFS-11377,"When running balancer on large cluster which have more than 3000 Datanodes, it might be hung due to ""No mover threads available""..",0
+HDFS-11508,Bind can fail in SimpleTCPServer & Portmap because socket is in TIME_WAIT state.. Socket options should be changed here to use the setReuseAddress option.,-1
+HDFS-11515,A ConcurrentModificationException forced du to terminate abruptly..,0
+HDFS-11515,"Basically, a HashSet can not be updated while an iterator is traversing it.",0
+HDFS-11515,"Correspondingly, NameNode log has the following error:.",0
+HDFS-11515,"HDFS-10797 fixed a disk summary (-du) bug, but it introduced a new bug..",-1
+HDFS-11515,The bug can be reproduced running the following commands:.,0
+HDFS-11515,"The bug is due to a improper use of HashSet, not concurrent operations.",0
+HDFS-11526,The following error message is wrong..,-1
+HDFS-11526,"The operation performed in the try block is an attempt to recover the block, not obtain replica info from the datanode..",0
+HDFS-11526,This is the error message printed by the above code:,0
+HDFS-1158,# /disk0 that is used for storing PID goes read-only .,0
+HDFS-1158,# /tmp disk goes read-only.,0
+HDFS-1158,1) .,0
+HDFS-1158,2) .,0
+HDFS-1158,and probably more..,0
+HDFS-1158,"I can recover the missing blocks but it takes some time.. Also, we are losing track of block movements since log directory can also go to read-only but datanode would continue running.. For 0.21 release, can we revert HDFS-457 or make it configurable?",-1
+HDFS-1158,"In our environment, /tmp and /disk0 are from the same device..",0
+HDFS-1158,or .,0
+HDFS-1158,"When trying to restart a datanode, it would fail with.",0
+HDFS-1158,"Whenever we restart a cluster, there's a chance of losing some blocks if more than three datanodes don't come up.. HDFS-457 increases this chance by keeping the datanodes up even when .",-1
+HDFS-11593,"A busy datanode may have many client disconnect exception logged with stack like below, which does not provide much useful information.",-1
+HDFS-11593,Propose to reduce the log level from info to debug.,0
+HDFS-11741,"In a specific cluster, with Kerberos ticket life time 10 hours, and default block token expiration/life time 10 hours, a long running balancer failed after 20~30 hours.",0
+HDFS-11741,This bug is similar in nature to HDFS-10609.,0
+HDFS-11741,"We found a long running balancer may fail despite using keytab, because KeyManager returns expired DataEncryptionKey, and it throws the following exception:.",0
+HDFS-11741,"While balancer KeyManager actively synchronizes itself with NameNode w.r.t block keys, it does not update DataEncryptionKey accordingly..",-1
+HDFS-12363,"In that version, {{BlockManager}} code is:",0
+HDFS-12363,Saw NN going down with NPE below:.,0
+HDFS-12383,Logs below:.,0
+HDFS-12383,"Seen an instance where the re-encryption updater exited due to an exception, and later tasks no longer executes.",0
+HDFS-12383,Updater should be fixed to handle canceled tasks better.,-1
+HDFS-12498,*Log Snippet:*,0
+HDFS-12498,"Journal Syncer is not getting started in HDFS + Federated cluster, when dfs.shared.edits.dir.<<nameserviceId>> is provided, instead of dfs.namenode.shared.edits.dir .",0
+HDFS-12833,Basically Delete option applicable only with update or overwrite options.,0
+HDFS-12833,Even in Document also it's not updated proper usage.,-1
+HDFS-12833,I tried as per usage message am getting the bellow exception..,0
+HDFS-12836,"However, in the following code:.",-1
+HDFS-12836,"it is possible that {{remoteLog.getStartTxId()}} could be greater than {{endTxId}}, and therefore will cause the following error:",-1
+HDFS-12836,"When {{dfs.ha.tail-edits.in-progress}} is true, edit log tailer will also tail those in progress edit log segments.",0
+HDFS-129,.,0
+HDFS-129,.,0
+HDFS-129,"After dfsadmin -refreshNodes, datanode was able to join back.",0
+HDFS-129,"Somehow, instead of getting 'reject' message, datanode shutdown with NPE.",-1
+HDFS-129,"Stack trace,",0
+HDFS-129,"When bringing back a decommissioned node, we forgot to take out the hostname from dfs.hosts.exclude and call dfsadmin -refreshNodes.",0
+HDFS-13023,Fails with the following exception.,0
+HDFS-13145,"Between each batch, it will wait for the JNs to reach a quorum.",0
+HDFS-13145,"Even though we are using a 2.8.2 backport, I believe the same issue also exist in 3.0.x.",0
+HDFS-13145,"However, if the ANN crashes in between, then SBN will crash while transiting to ANN:.",0
+HDFS-13145,"In our environment, this can be reproduced pretty consistently, which will leave the cluster with no running namenodes.",0
+HDFS-13145,"This is because without the dummy batch, the {{commitTxnId}} will lag behind the {{endTxId}}, which caused the check in {{openForWrite}} to fail:.",0
+HDFS-13145,"With edit log in-progress edit log tailing enabled, {{QuorumOutputStream}} will send two batches to JNs, one normal edit batch followed by a dummy batch to update the commit ID on JNs..",0
+HDFS-13164,"- client {{startFile}} rpc to NN, gets a {{DFSOutputStream}}..  - writing to the stream would trigger the streamer to {{getAdditionalBlock}} rpc to NN, which would get the DSQuotaExceededException.",0
+HDFS-13164,- client closes the stream.,0
+HDFS-13164,"# {{isClosed}} is first checked, and the close call will be a no-op if {{isClosed == true}}..  # {{flushInternal}} checks {{isClosed}}, and throws the exception right away if鑱絫rue.",0
+HDFS-13164,.,0
+HDFS-13164,{{isClosed}} does this: {{return closed || getStreamer().streamerClosed;}}.,0
+HDFS-13164,"Because the streamer runs in a separate thread, at the time the client calls close on the stream, the streamer may or may not have reached the Quota exception.",0
+HDFS-13164,"However, the file would be left in openforwrite status (shown in鑱絳{fsck -openforwrite)}} at least, and could potentially leak leaseRenewer too..",-1
+HDFS-13164,"If it has, then due to #1, the close call on the stream will be no-op.",0
+HDFS-13164,"If it hasn't, then due to #2 the {{completeFile}} logic will be skipped.. Log snippets:",0
+HDFS-13164,"If the dir's space quota is exceeded, the following would happen when a file is created:.",0
+HDFS-13164,The fact that this would leave a 0-sized (or whatever size left in the quota) file in HDFS is beyond the scope of this jira.,0
+HDFS-13164,"This is because in the close implementation,.",0
+HDFS-13164,This is found during yarn log aggregation but theoretically could happen to any client..,-1
+HDFS-13164,"When the disk quota is reached, {{getAdditionalBlock}} will throw when the streamer calls.",0
+HDFS-13368,TestEndPoint#testHeartbeatTaskToInvalidNode,0
+HDFS-13368,These parameters are not set in TestEndPoint which lead these to fail consistently.. TestEndPoint#testRegisterToInvalidEndpoint.,0
+HDFS-13368,"With聽HDFS-13300, the hostName and IpAdress in the DatanodeDetails.proto file made required fiields.",0
+HDFS-13485,curl -k -i --negotiate -u : "https://hadoop3-4.example.com:20004/webhdfs/v1".,0
+HDFS-13485,DataNode Web UI should do a better error checking/handling.,-1
+HDFS-13721,.,0
+HDFS-13721,Changing it to an IOE will also allow jmx to return '' correctly for \{{getDiskBalancerStatus}}.,0
+HDFS-13721,Should improve the NPE.,0
+HDFS-13721,We have seen the above exception at datanode startup time.,0
+HDFS-3326,"""dfs.support.append"" is set to true.",0
+HDFS-3326,=====.,0
+HDFS-3326,========,0
+HDFS-3326,At the NN side log the append enable is set to false..,0
+HDFS-3326,Code:.,0
+HDFS-3326,NN logs.,0
+HDFS-3326,started NN in non-HA mode.,0
+HDFS-3326,This is because in code append enabled is set to HA enabled value.Since Started NN in non-HA mode the value for append is false.,0
+HDFS-3332,Here when Directory scanner is trying to report badblock we got a NPE.,0
+HDFS-3332,I corrupted 1 block and found .,0
+HDFS-3332,There is 1 NN and 1 DN (NN is started with HA conf).,0
+HDFS-3374,"The testcase is failing because the MiniDFSCluster is shutdown before the secret manager can change the key, which calls system.exit with no edit streams available.",0
+HDFS-3398,.,0
+HDFS-3398,=========.,0
+HDFS-3398,"Before start writing to the DN ,kill the primary DN.. Now write will fail with the exception .",0
+HDFS-3398,Scenario:.,0
+HDFS-3398,Start NN and three DN"S. Get the datanode to which blocks has to be replicated.. from .,0
+HDFS-35,Fixing this could be trivial.,0
+HDFS-35,If a file has a replicaiton of 3 and setReplication() is used to set the replication to 1 we will see following log in NameNode log : .,0
+HDFS-3597,But the check is too strict and considers "different metadata version" to be the same as "different clusterID"..,-1
+HDFS-3597,I believe the check in {{doCheckpoint}} simply needs to explicitly check for and handle the update case.,0
+HDFS-3597,"The error check we're hitting came from HDFS-1073, and it's intended to verify that we're connecting to the correct NN.",0
+HDFS-3597,"When upgrading from 1.x to 2.0.0, the SecondaryNameNode can fail to start up:.",0
+HDFS-3824,{{testHdfsDelegationToken}} fails if not run before {{testSelectHftpDelegationToken}} and {{testSelectHsftpDelegationToken}}:.,0
+HDFS-3824,Debug output:,0
+HDFS-3828,{{BlockPoolSliceScanner#scan}} calls cleanUp every time it's invoked from {{DataBlockScanner#run}} via {{scanBlockPoolSlice}}.,0
+HDFS-3828,{quote}.,0
+HDFS-3828,As a result a cluster with just one block repeatedly rescans it every 10 seconds:.,0
+HDFS-3828,"But cleanUp unconditionally roll()s the verificationLogs, so after two iterations we have lost the first iteration of block verification times.",-1
+HDFS-3828,"To fix this, we need to avoid roll()ing the logs multiple times per period.",0
+HDFS-3919,"A test run hung due to a known system config issue, but the hang was interesting:.",1
+HDFS-3919,The MiniDFSCluster should give up after a few seconds.,0
+HDFS-4006,"It looks like the background checkpoint fails, conflicts with the explicit checkpoints done by the tests (note the backtrace is not for the doCheckpoint calls in the tests.",0
+HDFS-4006,"TestCheckpoint#testSecondaryHasVeryOutOfDateImage occasionally fails due to unexpected exit, due to an NPE while checkpointing.",-1
+HDFS-4128,- Future checkpoints then fail because the prior edit log replay only got halfway through the stream:,0
+HDFS-4128,- It fails in the middle of replay due to an OOME:.,0
+HDFS-4128,- The 2NN downloads an edit log segment:.,0
+HDFS-4128,We saw the following issue in a cluster:.,0
+HDFS-4201,Saw the following NPE in a log..,0
+HDFS-4201,"Think this is likely due to {{dn}} or {{dn.getFSDataset()}} being null, (not {{bpRegistration}}) due to a configuration or local directory failure.",0
+HDFS-4426,"After HADOOP-9181 went in, the secondary namenode immediately shuts down after it is started.",0
+HDFS-4426,Apparently we were implicitly relying on the fact that the HttpServer QueuedThreadPool threads were not daemon threads to keep the secondary namenode process up.,0
+HDFS-4426,From the startup logs:.,0
+HDFS-4426,"I looked into the issue, and it's shutting down because SecondaryNameNode.main starts a bunch of daemon threads then returns.",0
+HDFS-4426,"With nothing but daemon threads remaining, the JVM sees no reason to keep going and proceeds to shutdown.",0
+HDFS-4813,At the end of the log:,0
+HDFS-4813,TestBlocksWithNotEnoughRacks may fail occasionally due to the bug:.,0
+HDFS-4841,Hadoop version:.,0
+HDFS-4841,"I'll attach my core-site.xml, hdfs-site.xml, NN and DN output logs.",0
+HDFS-4841,I'm seeing a problem when issuing FsShell commands using the webhdfs:// URI when security is enabled.,0
+HDFS-4841,I've checked that FsShell + hdfs:// commands and WebHDFS operations through curl work successfully:.,1
+HDFS-4841,The command completes but leaves a warning that ShutdownHook 'ClientFinalizer' failed..,-1
+HDFS-4841,"When I disable security, the warning goes away..",0
+HDFS-4850,"and forced another checkpoint, fetched the fsimage, and reran the OfflineImageViewer.",0
+HDFS-4850,"Attached are the data dirs, the fsimage before creating the empty file (fsimage_0000000000000000004) and the fsimage afterwards (fsimage_0000000000000000004) and their outputs, oiv_out_1 and oiv_out_2 respectively..",0
+HDFS-4850,I deployed hadoop-trunk HDFS and created _/user/schu/_.,0
+HDFS-4850,I don't run into this problem using hadoop-2.0.4-alpha.,0
+HDFS-4850,I encountered a NegativeArraySizeException:.,0
+HDFS-4850,"I then forced a checkpoint, fetched the fsimage, and ran the default OfflineImageViewer successfully on the fsimage..",1
+HDFS-4850,I then touched an empty file _/user/schu/testFile1_.,0
+HDFS-4850,I've reproduced this scenario after formatting HDFS and restarting and touching an empty file _/testFile1_..,0
+HDFS-4850,The oiv_out_2 does not include the empty _/user/schu/testFile1_..,0
+HDFS-4850,This is reproducible.,0
+HDFS-5185,.,0
+HDFS-5185,DataNode fails to startup if one of the data dirs configured is out of space.,-1
+HDFS-5185,fails with following exception.,0
+HDFS-5185,It should continue to start-up with other data dirs available.,0
+HDFS-5291,And then we get into safemode,0
+HDFS-5291,"In our test, we saw NN immediately went into safemode after transitioning to active state.",-1
+HDFS-5291,Some log snippets:.,0
+HDFS-5291,standby state to active transition.,0
+HDFS-5291,This can cause HBase region server to timeout and kill itself.,-1
+HDFS-5291,We should allow clients to retry when HA is enabled and ANN is in SafeMode.. ============================================.,0
+HDFS-5322,While running HA tests we have seen issues were we see HDFS delegation token not found in cache errors causing jobs running to fail.,0
+HDFS-5710,From https://builds.apache.org/job/hbase-0.96-hadoop2/166/testReport/junit/org.apache.hadoop.hbase.mapreduce/TestTableInputFormatScan1/org_apache_hadoop_hbase_mapreduce_TestTableInputFormatScan1/ :.,0
+HDFS-5710,"Looks like getRelativePathINodes() returned null but getFullPathName() didn't check inodes against null, leading to NPE.",-1
+HDFS-6102,Found by [~schu] during testing.,0
+HDFS-6102,"Some further research reveals there's a 64MB max size per PB message, which seems to be what we're hitting here.",0
+HDFS-6102,"We were creating a bunch of directories in a single directory to blow up the fsimage size, and it ends up we hit this error when trying to load a very large fsimage:.",-1
+HDFS-6178,Active NN picked machine F as the target.,0
+HDFS-6178,Active picked D and E as excess DNs.,0
+HDFS-6178,"After the next block reports from D and E, active NN has 3 active replicas (A, B, C), 0 excess replica..",0
+HDFS-6178,"At this point, you have one decommissioning replica (A), 1 active replica (B), one excess replica (C).. 3.",0
+HDFS-6178,Currently decommissioning machines in HA-enabled cluster requires running refreshNodes in both active and standby nodes.,0
+HDFS-6178,"For a given block, both active and standby have 5 replicas on machine A, B, C, D, E. So both active and standby decide to pick excess nodes to invalidate..",0
+HDFS-6178,"Given DNs ignore commands from standby, After the next block reports from C, D, E,  standby has 2 active replicas (A, B), 1 excess replica (C).. 2.",0
+HDFS-6178,Here is an example.. Machine A.,0
+HDFS-6178,Here is the diagnosis of why it could happen..,0
+HDFS-6178,It finished properly.,0
+HDFS-6178,Machine A decomm request was sent to active NN.,0
+HDFS-6178,Machine A decomm request was sent to standby.,0
+HDFS-6178,Machine B.,0
+HDFS-6178,Machine C. Machine D. Machine E. Machine F. Machine G. Machine H. 1.,0
+HDFS-6178,So active NN and standby NN could have different states.,0
+HDFS-6178,"So active NN had 3 active replicas (B, C, F), one decommissioned replica (A).. 4.",0
+HDFS-6178,Sometimes decommissioning won't finish from standby NN's point of view.,-1
+HDFS-6178,"Standby NN kept trying to schedule replication work, but DNs ignored the commands.",-1
+HDFS-6178,Standby NN picked up F as a new replica.,0
+HDFS-6178,Standby NN's blockManager manages blocks replication and block invalidation as if it is the active NN; even though DNs will ignore block commands coming from standby NN.,0
+HDFS-6178,"Standby only had one live replica and picked machine G, H as targets, but given standby commands was ignored by DNs, G, H remained in pending replication queue until they are timed out.",-1
+HDFS-6178,"Standby pick C, E as excess DNs.",0
+HDFS-6178,"Thus standby had one decommissioning replica (A), 2 active replicas (B, F), one excess replica (C).",0
+HDFS-6178,"When standby NN makes block operation decisions such as the target of block replication and the node to remove excess blocks from, the decision is independent of active NN.",0
+HDFS-6178,When we try to decommission nodes on standby nodes; such state inconsistency might prevent standby NN from making progress.,0
+HDFS-62,From the namenode log:.,0
+HDFS-62,From the secondary namenode log:,0
+HDFS-62,I have set up {{dfs.secondary.http.address}} like this:.,0
+HDFS-62,"In my setup {{secondary.example.com}} resolves to an IP address (say, 192.168.0.10) which is not the same as the host's name (as returned by {{InetAddress.getLocalHost().getHostAddress()}}, say 192.168.0.1)..",0
+HDFS-62,"In this situation, edit log related transfers fail.",0
+HDFS-6348,.,0
+HDFS-6348,But when I check the environment SecondaryNamenode process is alive.,-1
+HDFS-6348,I'm attaching threaddump to this JIRA for more details about the thread.,0
+HDFS-6348,"Secondary Namenode is not exiting when there is RuntimeException occurred during startup.. Say I configured wrong configuration, due to that validation failed and thrown RuntimeException as shown below.",-1
+HDFS-6348,"When analysed, RMI Thread is still alive, since it is not a daemon thread JVM is nit exiting.",0
+HDFS-6462,1) Create user named UserB and UserA.,0
+HDFS-6462,2) Create group named GroupB.,0
+HDFS-6462,3) Add root and UserB users to GroupB.,0
+HDFS-6462,4) Set below properties.,0
+HDFS-6462,4) start nfs server as UserA.,0
+HDFS-6462,5) mount nfs as root user.,0
+HDFS-6462,6) run below command .,0
+HDFS-6462,Fsstat fails in secure environment with below error.. Steps to reproduce:.,0
+HDFS-6462,Make sure UserA is not in GroupB.,0
+HDFS-6462,NFS Logs complains as below,-1
+HDFS-6481,"However, when the length of storageIDs is shorter than that of datanodeID, we would get ArrayIndexOutOfBoundsException.",-1
+HDFS-6481,Ian Brooks reported the following stack trace:.,0
+HDFS-6481,The loop is controlled by the length of datanodeID:.,0
+HDFS-6797,.,0
+HDFS-6797,Actually name node's layout version is displayed as the "new LV" value..,0
+HDFS-6797,"after upgrade completing, restart of DN still shows message regarding version difference:.",0
+HDFS-6797,"Before upgrade, data node version was -55.",0
+HDFS-6797,During upgrade we got he following messages:.,0
+HDFS-6797,"Since the data node and name node layout versions are separate now, the new data node layout version should be shown as the 閳ユ笜ew LV閳.",0
+HDFS-6797,Thanks to [~ehf] who found and reported this issue.,1
+HDFS-6797,The new data node version remained at -55.,-1
+HDFS-6797,This causes confusion to the operators as if upgrade did not succeed since data node's layout version is not updated to the "new LV" value.,-1
+HDFS-6823,"If Kerberos isn't configured, we shouldn't try to display the principal message, never mind the raw text of the configuration option.",-1
+HDFS-6823,Starting the namenode on a system not running Kerberos results in the following showing up in the log:.,0
+HDFS-7236,AND,0
+HDFS-7236,AND.,0
+HDFS-7236,Creating this jira for it (The other two tests that failed more often were reported in separate jira HDFS-7221 and HDFS-7226).,0
+HDFS-7236,Per the following report.,0
+HDFS-7236,Symptom:.,0
+HDFS-7236,TestOpenFilesWithSnapshot.testOpenFilesWithMultipleSnapshots failed in most recent two runs in trunk.,0
+HDFS-7916,"if any badblock found, then BPSA for StandbyNode will go for infinite times to report it.",0
+HDFS-7996,"{{FsVolumeList#removeVolume}} waits all threads release {{FsVolumeReference}} on the volume to be removed, however, in {{PacketResponder#finalizeBlock()}}, it calls.",-1
+HDFS-7996,The {{FsVolumeReference}} was released in {{BlockReceiver.this.close()}} before calling {{datanode.data.finalizeBlock(block)}}.,0
+HDFS-7996,"When removing a disk from an actively writing DataNode, the BlockReceiver working on the disk throws {{ReplicaNotFoundException}} because the replicas are removed from the memory:.",0
+HDFS-8173,NPE thrown at Datanode startup --,0
+HDFS-8276,bq.,0
+HDFS-8276,but I think it is simple enough to change the meaning of the value so that zero means 'never scrub'.,0
+HDFS-8276,Currently namenode startup is failing if interval configured zero,0
+HDFS-8276,"Let me post an updated patch.. As discussed in [HDFS-6929|https://issues.apache.org/jira/browse/HDFS-6929], scrubber should be disable if *dfs.namenode.lazypersist.file.scrub.interval.sec* is zero..",0
+HDFS-872,"After upgrading to that latest HDFS 0.20.2 (r896310 from /branches/branch-0.20), old DFS clients (0.20.1) seem to not work anymore.",0
+HDFS-872,HBase uses the 0.20.1 hadoop core jars and the HBase master will no longer startup.,0
+HDFS-872,Here is the exception from the HBase master log:.,0
+HDFS-872,"If I switch the hadoop jars in the hbase/lib directory with 0.20.2 version it works well, which what led me to open this bug here and not in the HBASE project.",0
+HDFS-8807,Here is an example of "mis-configration" that leads to datanode failure..,0
+HDFS-8807,Here is the "fixed" version.,0
+HDFS-8807,if you add a space between the storage type and file URI then datanodes fail during startup..,0
+HDFS-8807,Please *note* the lack of space between \[DISK\] and file URI.,0
+HDFS-8807,"we fail with a parsing error, here is the info from the datanode logs.",0
+HDFS-9624,And I know that Scanning blocks on volume and then calculating the dfsUsed costs the most of time.,0
+HDFS-9624,And it looks not suitable for here.,0
+HDFS-9624,"Because my datanode's migiration costs the much time, so that dfsUsed value can't use cache-dfsused and should be doing du operations.",0
+HDFS-9624,But actually I don't need do it again because there has no operations in these datanodes.,-1
+HDFS-9624,It seems starting datanode so slowly when I am finishing migration of datanodes and restart them.I look the dn logs:.,-1
+HDFS-9624,The 600 seconds is a dead code.,0
+HDFS-9624,The info is these:.,0
+HIVE-10690,Noticed a bunch of these stack traces in hive.log while running some unit tests:,0
+HIVE-10736,The shutdown process throws concurrent modification exceptions and fails to clean up the app masters per queue.,0
+HIVE-10801,It seems that the tblPath is still null when shims.isPathEncrypted is called..,0
+HIVE-10801,Thanks to [~asreekumar] for uncovering this issue !,1
+HIVE-10801,The following code in HiveMetaStore seems to have caused this issue :.,0
+HIVE-10801,"When trying to drop a view, hive log shows:.",0
+HIVE-11301,and CLI hangs for a really long time while this thing is retrying.,-1
+HIVE-11301,and then.,0
+HIVE-11301,On metastore side it looks like this:.,0
+HIVE-11301,Which on client manifests as.,0
+HIVE-11540,[ngmathew@upladevhwd04v ~]$ tail -f /var/log/hive/hivemetastore.log.,0
+HIVE-11540,"2015-08-12 15:36:18,443 ERROR [upladevhwd04v.researchnow.com-18]: compactor.Worker (Worker.java:run(176)) - Caught exception while trying to compact weblogs.vop_hs.dt=15-08-12.",0
+HIVE-11540,Any suggestions on what I can do to improve performance?,0
+HIVE-11540,at java.security.AccessController.doPrivileged(Native Method).,0
+HIVE-11540,at javax.security.auth.Subject.doAs(Subject.java:415).,0
+HIVE-11540,at org.apache.hadoop.hive.ql.txn.compactor.CompactorMR.run(CompactorMR.java:186).,0
+HIVE-11540,at org.apache.hadoop.hive.ql.txn.compactor.Worker$1.run(Worker.java:169).,0
+HIVE-11540,at org.apache.hadoop.hive.ql.txn.compactor.Worker.run(Worker.java:166).,0
+HIVE-11540,at org.apache.hadoop.mapred.JobClient.runJob(JobClient.java:865).,0
+HIVE-11540,at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1657).,0
+HIVE-11540,"Hello,.",0
+HIVE-11540,hive.compactor.initiator.on = true.,0
+HIVE-11540,hive.compactor.worker.threads = 5.,0
+HIVE-11540,hive.input.format = org.apache.hadoop.hive.ql.io.HiveInputFormat,0
+HIVE-11540,hive.txn.manager = org.apache.hadoop.hive.ql.lockmgr.DbTxnManager.,0
+HIVE-11540,hive.vectorized.execution.enabled = false.,0
+HIVE-11540,"I am streaming weblogs to Kafka and then to Flume 1.6 using a Hive sink, with an average of 20 million records a day.",0
+HIVE-11540,"I have 5 compactors running at various times (30m/5m/5s), no matter what time I give, the compactors seem to run out of memory cleaning up a couple thousand delta files and ultimately falls behind compacting/cleaning delta files.",-1
+HIVE-11540,I used this post as reference: http://henning.kropponline.de/2015/05/19/hivesink-for-flume/.,0
+HIVE-11540,"Marking clean to avoid repeated failures, java.io.IOException: Job failed!.",0
+HIVE-11540,Or can Hive streaming not handle this kind of load?.,0
+HIVE-11540,Settings:.,0
+HIVE-11540,Table stored as ORC.,0
+HIVE-11902,"The problem here is that the method {{abortTxns(Connection dbConn, List<Long> txnids)}} in metastore/src/java/org/apache/hadoop/hive/metastore/txn/TxnHandler.java creates the following bad query when txnids list is empty.",-1
+HIVE-11902,When cleaning left over transactions we see the DeadTxnReaper code threw the following exception:.,0
+HIVE-12364,failed at moveTask.,0
+HIVE-12364,hive client log:,0
+HIVE-12364,insert into/overwrite directory '/path' invokes distcp for moveTask and fails.,0
+HIVE-12364,insert overwrite into '/tmp/testinser' select * from customer;.,0
+HIVE-12364,PROBLEM:.,0
+HIVE-12364,query when execution engine is Tez .,0
+HIVE-12364,set hive.exec.copyfile.maxsize=40000;.,0
+HIVE-12662,And I got.,0
+HIVE-12662,It is using 鈥 RelMetadataQuery.getRowCount鈥 which is always at least 1.,0
+HIVE-12662,"L96 of HiveSortJoinReduceRule, you will see .",0
+HIVE-12662,"This is the problem that we resolved in CALCITE-987.. To confirm this, I just run the q file :.",0
+HIVE-12662,via [~pxiong],0
+HIVE-12815,"and returns null, then it fails with NPE:.",0
+HIVE-12815,First it logs why it cannot get stats:.,0
+HIVE-12815,I was running something like create table as select 1;.,0
+HIVE-12815,Only "NullPointerException null" is logged to CLI... :(,-1
+HIVE-13002,Discovered in some q test run:,0
+HIVE-13017,"The following query fails, when Azure Filesystem is used as default file system, and HDFS is used for intermediate data.. hivesever2 log shows:",0
+HIVE-13128,Nullscan provides uris of the form nullscan://null/ - which are added to the list of FileSystems for which Tez should obtain tokens..,-1
+HIVE-13128,This is while trying to obtain tokens for,0
+HIVE-13174,If you have a table with a bin column you're hs2/client logs are full of the stack traces below.,-1
+HIVE-13174,These should either be made debug or we just log the message not the trace.,0
+HIVE-13261,Error msg:,0
+HIVE-13261,To repro.,0
+HIVE-13361,But this new merged file will have 128KB buffer size (estimated buffer size and not requested buffer size).,0
+HIVE-13361,Consider the following table with files.,0
+HIVE-13361,Following exception will be thrown when reading the table after concatenation,0
+HIVE-13361,"If we perform ALTER TABLE .. CONCATENATE on the above table with HIVE-11807, then depending on the split arrangement 000000_0 and 000001_0 will be concatenated together to new merged file.",0
+HIVE-13361,Since new ORC writer size does not honor the requested buffer size the new merged files will have smaller buffers than the required 256KB making the file unreadable.,0
+HIVE-13361,This can have undesired effect wrt file concatenation.,-1
+HIVE-13361,With HIVE-11807 buffer size estimation happens by default.,0
+HIVE-13743,Data move codepath is broken with hive 2.1.0-SNAPSHOT with hadoop 2.8.0-snapshot.. https://github.com/apache/hive/blob/26b5c7b56a4f28ce3eabc0207566cce46b29b558/ql/src/java/org/apache/hadoop/hive/ql/metadata/Hive.java#L2836.,0
+HIVE-13743,hdfsEncryptionShim.isPathEncrypted(destf) in Hive could end up throwing FileNotFoundException as the destf is not present yet.,-1
+HIVE-13743,This causes moveFile to fail.,0
+HIVE-13810,runs into the following error:,0
+HIVE-13810,When running using beeline (as a non hdfs user).,0
+HIVE-13856,Couple of ways the following [post|http://www.oratable.com/oracle-insert-all/] describe is either inserting each row individually or use the {{INSERT ALL}} semantics.,0
+HIVE-13856,ends up building a query of the form.,0
+HIVE-13856,I think the reason here is that.,0
+HIVE-13856,Oracle doesn't like this way of inserting multiple rows of data.,0
+HIVE-13872,Simplified query,0
+HIVE-13872,TPC-DS Q13 produces a cross-product without CBO simplifying the query.,-1
+HIVE-14173,"hive.metastore.try.direct.sql is initially set to false in HMS hive-site.xml, then changed to true using set metaconf command in the middle of a session, running a query will be thrown NPE with error message is as following:",0
+HIVE-14292,Saw the following detailed stack in the server log:,0
+HIVE-14292,While creating a ACID table ran into the following error:.,0
+HIVE-14355,I guess this should happen even for other conversions.,-1
+HIVE-14355,When schema is evolved from any integer type to string then following exceptions are thrown in LLAP (Works fine in Tez).,0
+HIVE-14607,HIVE-14448 was supposed to have fixed it....,-1
+HIVE-14607,in TestTxnCommands2WithSplitUpdate remove the overridden method testOrcPPD().. Then run:.,0
+HIVE-14607,it will fail with ArrayIndexOutOfBounds.,0
+HIVE-14607,mvn test -Dtest=TestTxnCommands2WithSplitUpdate#testOrcPPD.,0
+HIVE-14607,Steps to repro: .,0
+HIVE-14743,Repro:,0
+HIVE-14743,The stack:.,0
+HIVE-14773,eg: .,0
+HIVE-14773,Here d_date_sk is a partition column and d_date is of type date.,0
+HIVE-14773,Hive runs into a NPE when the query has a filter on a date column and the partitioned column .,0
+HIVE-15275,Execute {{"beeline -f <file>"}} and the command will throw the following NPE exception.,0
+HIVE-15282,.,0
+HIVE-15282,"Because of the modification time of the itests/qtest/target/warehouse/srcpart/ds=2008-04-09/hr=11/kv1.txt file is higher (11:46:40), than the modification time of the itests/qtest/target/warehouse/srcpart/ds=2008-04-09/hr=11 folder (11:46:39), the check fails and the index is not used which leads to the failure of the q test.",0
+HIVE-15282,"But when the staleness is checked in the IndexUtils.isIndexPartitionFresh method, it checks the modification time of the files in the partition folder:.",0
+HIVE-15282,"From the output of the failing test, it seems that the index on the srcpart table is not used.",0
+HIVE-15282,"In this case, the last modification time of the folder itests/qtest/target/warehouse/srcpart/ds=2008-04-09/hr=11/ will be 11:46:39 and of the kv1.txt will be 11:46:40..",0
+HIVE-15282,"So the folder is created at 11:46:39,961, but the MoveTask which moves the kv1.txt file to the folder starts at 11:46:39:961 and finishes at 11:46:40,012..",-1
+HIVE-15282,The hive.log contains the following:.,0
+HIVE-15282,The index_auto_mult_tables and index_auto_mult_tables_compact q tests are failing from time to time with the following error:.,0
+HIVE-15282,"The staleness check fails for the index on the srcpart table for the ds=2008-04-09/hr=11 partition, so the index is really not used.",0
+HIVE-15282,"The staleness check fails, because the modification time of the itests/qtest/target/warehouse/srcpart/ds=2008-04-09/hr=11/kv1.txt file (11:46:40:0) is higher than the index creation time (11:46:39:0).. After some investigation, I found that this happens if the creation of the partition folder and moving the kv1.txt file happens when the second turns.",0
+HIVE-15282,"When the index is built in the DDLTask.alterIndex method, the modification time which is stored for each partition is the modification time of the folder:.",0
+HIVE-15309,"Also,.",0
+HIVE-15309,and a corresponding "unlock" msg which flood the metastore log.,0
+HIVE-15309,Currently causes unnecessary/confusing logging:.,-1
+HIVE-15309,"Need to follow up on this.. Also,.",0
+HIVE-15309,Note that the msg says "Deleted 9 ext locks..."  It actually delete 1 ext which has 9 internal components.,-1
+HIVE-15309,OrcAcidUtils.getLastFlushLength() should check for file existence first.,0
+HIVE-15309,TxnHandler has.,0
+HIVE-15542,"Observed the following stacktrace, when all the values are NULL in date column.",0
+HIVE-15647,Here's a simple example with the foodmart database:.,0
+HIVE-15647,If you remove the boolean condition the NPE doesn't happen.,0
+HIVE-15647,If you use = the NPE doesn't happen.,0
+HIVE-15647,This happens on trunk and on HDP 2.5.3 / Hive 2.,0
+HIVE-15731,A HS2 instance configured for a single session will stop running queries.,0
+HIVE-15731,The session slot is useless at this point.,-1
+HIVE-15731,"While returning a session to the pool, the interrupt status on the thread seems to be set, which causes the pool return to fail..",-1
+HIVE-15755,Hiveserver2 logs:,0
+HIVE-15755,Ran into this error message - "Error while compiling statement: FAILED: NullPointerException null " when I specified an incorrect tablename in the merge statement..  .,0
+HIVE-15859,"also in container's log, I find Driver still request for executors:.",0
+HIVE-15859,"application log shows the driver commanded a shutdown with some unknown reason, but hive's log shows Driver could not get RPC header( Expected RPC header, got org.apache.hive.spark.client.rpc.Rpc$NullMessage instead).. in hive's log,.",-1
+HIVE-15859,found only one ERROR in yarn application log:.,0
+HIVE-15859,"Hive on Spark, failed with error:.",0
+HIVE-15859,"this error occurs when several queries run at the same time with large data scale, in fact it would not occur when running the query separately, but it can frequently occur when running together again.",0
+HIVE-15923,"This is the ORM error, direct SQL fails too before that, with a similar error.",0
+HIVE-16562,/cc [~kgyrtkirk] in case you have any ideas,0
+HIVE-16562,"1	1.",0
+HIVE-16562,"1.0	1.0.",0
+HIVE-16562,"1.5	1.5.",0
+HIVE-16562,"2	2.",0
+HIVE-16562,"2.0	2.0. test:.",0
+HIVE-16562,And this query:.,0
+HIVE-16562,Cluster side jobs work fine but client side don't..,-1
+HIVE-16562,"Columns c1 = float, c2 = double.",0
+HIVE-16562,"Columns c1 = int, c2 = int.",0
+HIVE-16562,Consider these two tables:.,0
+HIVE-16562,Data:.,0
+HIVE-16562,e011_02:.,0
+HIVE-16562,HIVE-13555 adds support for nullif.,0
+HIVE-16562,I get:.,0
+HIVE-16562,I'm encountering issues with nullif on master (3.0.0-SNAPSHOT rdac3786d86462e4d08d62d23115e6b7a3e534f5d).,0
+HIVE-16562,"Now if I set hive.fetch.task.conversion=none; and force a cluster side job, everything works fine.",0
+HIVE-16562,"select nullif(c1, c2) from e011_02;.",0
+HIVE-16562,"select nullif(c1, c2) from test;.",0
+HIVE-16562,With .,0
+HIVE-16562,With e011_02 I get:.,0
+HIVE-16576,Debug logs on HIVE side - .,0
+HIVE-16576,Druid exception stack trace - .,0
+HIVE-16576,Note that intervals being sent as part of the HTTP request URL are not encoded properly when not using UTC timezone.,0
+HIVE-16788,Compare: Postgres.,0
+HIVE-16788,Example using the table "customer" from TPC-H with FKs defined in Hive:.,0
+HIVE-16788,Note that Postgres allows traversal from either way.,0
+HIVE-16788,The traceback you get in the HS2 logs is this:,0
+HIVE-16788,"This ODBC call is meant to allow you to determine FK relationships either from the PK side or from the FK side.. Hive only allows you to traverse from the FK side, trying it from the PK side leads to an NPE..",0
+HIVE-16877,After HIVE-8839 in 1.1.0 support "alter table ... cascade" to cascade table changes to partitions as well.,0
+HIVE-16877,But NPE thrown when issue query like "alter table ... cascade" onto non-partitioned table .,-1
+HIVE-16877,Exception stack:,0
+HIVE-16877,Sample Query:.,0
+HIVE-16973,Had a report from a user that Kerberos+AccumuloStorageHandler+HS2 was broken.,0
+HIVE-16973,I believe it would also be best to just update the dependency to use Accumulo 1.7 (drop 1.6 support) as it's lacking in this regard.,0
+HIVE-16973,It appears that some of the code-paths changed since when I first did my testing (or I just did poor testing) and the delegation token was never being fetched/serialized.,0
+HIVE-16973,"Looking into it, it seems like the bit-rot got pretty bad.",-1
+HIVE-16973,There also are some issues with fetching the delegation token from Accumulo properly which were addressed in ACCUMULO-4665.,0
+HIVE-16973,"These changes would otherwise get much more complicated with reflection -- Accumulo has moved on past 1.6, so let's do the same in Hive.",0
+HIVE-16973,You'll see something like the following:.,0
+HIVE-17007,Stack:,0
+HIVE-17063,.,0
+HIVE-17063,already existed..,0
+HIVE-17063,"As a result, insert overwrite partition twice will happen to fail because of the target data to be moved has .",0
+HIVE-17063,"I see the target data will not be cleared only when {{immediately generated data}} is child of {{the target data directory}}, so my proposal is trying  to clear target file already existed finally whe doing rename  {{immediately generated data}} into {{the target data directory}}.",0
+HIVE-17063,Operation reproduced:.,0
+HIVE-17063,Stack trace:,0
+HIVE-17063,"The default value of {{hive.exec.stagingdir}} which is a relative path, and also drop partition on a external table will not clear the real data.",0
+HIVE-17063,This happened when we reproduce partition data onto a external table.,0
+HIVE-17275,"If dynamic partitioning is used to write the output of UNION or UNION ALL queries into ORC files with hive.merge.tezfiles=true, the merge step fails as follows:",0
+HIVE-17309,Fix proposal is transfer the qualified table name when {{db.alterPartitions}} called.,0
+HIVE-17309,We see this code in {{DDLTask.java}} potential problem that not transfer the qualified table name with database name when {{db.alterPartitions}} called.. stacktrace:.,-1
+HIVE-17309,"When executor alter partition onto a table which existed not in current database, InvalidOperationException thrown.. SQL example:.",0
+HIVE-17368,HS2 is not able to invoke HMS APIs needed to add/remove/renew tokens from the DB since it is possible that the user which is issue the {{GetDelegationToken}} is not kerberos enabled.. Eg.,0
+HIVE-17368,I see the following exception trace in HS2 logs.. On HMS side I see a exception saying,0
+HIVE-17368,"In setups where HMS is running as a remote process secured using Kerberos, and when {{DBTokenStore}} is configured as the token store, the HS2 Thrift API call {{GetDelegationToken}} fail with exception trace seen below.",0
+HIVE-17368,It stores the HMS delegation token string in the sessionConf and sessionToken.,0
+HIVE-17368,It tries to establish transport using Kerberos and it fails since user Joe is not Kerberos enabled..,0
+HIVE-17368,"Now, lets say Oozie issues a {{GetDelegationToken}} which has {{Joe}} as the owner and {{oozie}} as the renewer in {{GetDelegationTokenReq}}.",0
+HIVE-17368,Oozie submits a job on behalf of user "Joe".,0
+HIVE-17368,"This API call cannot instantiate a HMSClient and open transport to HMS using the HMSToken string available in the sessionConf, since DBTokenStore uses server HiveConf instead of sessionConf.",0
+HIVE-17368,This principal can establish a transport authenticated using Kerberos.,0
+HIVE-17368,When Oozie opens a session with HS2 it uses Oozie's principal and creates a proxy UGI with Hive.,0
+HIVE-17602,Error stack in hive.log,0
+HIVE-17774,Looks like the MR job should not have been attempted in this case.,-1
+HIVE-17829,Stack.,0
+HIVE-17829,Steps to Repro:.,0
+HIVE-17829,The same query works with Hive 1.2.1,0
+HIVE-18001,Exception from the log,0
+HIVE-18046,"The materialized view impl breaks old metastore sql write access, by complaining that the new table creation does not set this column up.. {{NOT NULL DEFAULT 0}} would allow old metastore direct sql compatibility (not thrift).",-1
+HIVE-18090,* /user/another/another.jceks -- another.,0
+HIVE-18090,* /user/test/test.jceks -- test.,0
+HIVE-18090,* another .,0
+HIVE-18090,* test.,0
+HIVE-18090,"above will only help in recreating the issue, if the _insert overwrite_ query takes longer than _hive.txn.timeout / 2 = 4 / 2 = 2seconds_",0
+HIVE-18090,and restart hdfs.. enable ACID on HS2 (change the required properties).additional changes on  hiveserver2 configs .,0
+HIVE-18090,assuming two users .,0
+HIVE-18090,connect to the server using beeline using any user:.,0
+HIVE-18090,create two jceks files for each user and place them on hdfs with access to that file only allowed to the user.,0
+HIVE-18090,exit beeline and connect with user another .,0
+HIVE-18090,fails with exception .,0
+HIVE-18090,hdfs locations with permissions .,0
+HIVE-18090,on core-site.xml .,0
+HIVE-18090,open another beeline session with user test:.,0
+HIVE-18090,password used to create .,0
+HIVE-18090,start hiveserver2.,0
+HIVE-18090,steps to recreate the issue.,0
+HIVE-18148,"At this stage, there shouldn't be a DPP sink whose target map work is null.",-1
+HIVE-18148,The root cause seems to be a malformed operator tree generated by SplitOpTreeForDPP.,0
+HIVE-18148,The stack trace is:.,0
+HIVE-18250,After that non-CBO path completes the query.,0
+HIVE-18250,CBO gets turned off with:.,0
+HIVE-18393,Now this results in error for parquet tables.. Test Case:,0
+HIVE-18393,"TimeStamp, Decimal, Double, Float, BigInt, Int, SmallInt, Tinyint and Boolean when read as String, Varchar or Char should return the correct data.",-1
+HIVE-18413,* groupping key is select ; with a type which is backed by a bytea; ex:string.,0
+HIVE-18413,* groupping set contains empty.,0
+HIVE-18413,* non-trivial empty; mapper is run.,0
+HIVE-18413,* vectorizable groupby.,0
+HIVE-18413,causes:,0
+HIVE-18413,exposed by: HIVE-18359.,0
+HIVE-18413,"in case of vectorization, the summary row object was left as is (presumed null earlier); which may cause it to be inconsistent isNull conditions in .VectorHashKeyWrapperBatch.",-1
+HIVE-18413,issue happens only if:.,0
+HIVE-18494,"The DataNucleus layer returns List<String> for this case, when exactly one column has been selected.. And MetastoreDirectSQL is disabled for all further queries.",0
+HIVE-18574,Removing netty from Tez libs causes,0
+HIVE-18886,"At 200+ sessions on a single HS2, the DbLock impl fails to propagate mysql exceptions",0
+HIVE-18944,groupingSetsPosition is set to -1 in case there are no grouping sets; however DPP calls the constructor with 0 .,-1
+HIVE-18944,this could potentially trigger an unwanted emittion of a summary row,0
+HIVE-19155,If you try to insert data around the daylight saving time hour the query fails with following exception.,0
+HIVE-19155,The fix is to always adjust the Druid segments identifiers to UTC.,0
+HIVE-19155,You can reproduce this using the following DDL .,0
+HIVE-19316,The stack trace:,0
+HIVE-19646,Exception in proto logging hook on secure cluster.,0
+HIVE-19771,Otherwise we may throw an Exception.,0
+HIVE-19917,The actual issues is fixed by HIVE-19861..,0
+HIVE-19917,This is a follow up to add a test case.. Issue:,0
+HIVE-19935,I'm getting this error with WM feature quite frequently.,-1
+HIVE-19935,It causes AM containers to shut down and a new one created to replace it.,0
+HIVE-20209,"Metastore connection failed 1st attempt, but success after reconnect.",-1
+HIVE-20209,Run the following command:.,0
+HIVE-20209,See this in hs2.log:.,0
+HIVE-20209,"Similarly, Hive.close() also causes",0
+HIVE-20209,That adds 5s for every repl dump command and likely to leak connection..,-1
+HIVE-20281,HIVE-18201 seems to trigger a latent bug in SW optimizer.,0
+HIVE-20281,Test {{subquery_in_having}} fails with:,0
+HIVE-20502,Enabling {{hive.stats.fetch.column.stats}} makes this test fail during:.,0
+HIVE-20502,Exception:,0
+HIVE-20502,Seems like joinKeys is null at [this point|https://github.com/apache/hive/blob/48f92c31dee3983f573f2e66baaa213a0196f1ba/ql/src/java/org/apache/hadoop/hive/ql/optimizer/stats/annotation/StatsRulesProcFactory.java#L2169].,0
+HIVE-20610,Using /tmp聽directory creates exceptions for tests like dropTable :,0
+HIVE-20627,*Root cause:*.,0
+HIVE-20627,"For Async query execution from SQLOperation.runInternal, we set the Thread local Hive object for all the child threads as parentHive (parentSession.getSessionHive()).",0
+HIVE-20627,"In case of loading dynamic partitions, it creates MoveTask which鑱絩e-creates the Hive object鑱絘nd鑱絚loses the shared Hive object which causes metastore connection issues for鑱給ther async execution thread who still access it.",0
+HIVE-20627,"In this case, it is populated only in success flow but if there are exceptions, it is not and hence there is a leak.",-1
+HIVE-20627,Memory leak is found if one of the threads from Hive.loadDynamicPartitions throw exception.,0
+HIVE-20627,"Now, when async execution in progress and if one of the thread re-creates the Hive object, it closes the parentHive object first which impacts other threads using it and hence conf object it refers too gets cleaned up and hence we get null for VALID_TXNS_KEY value.. *Fix:*.",0
+HIVE-20627,rawStoreMap is used to store rawStore objects which has to be cleaned.,0
+HIVE-20627,Shall use a flag to know this.. *Memory leak issue:*.,0
+HIVE-20627,This is also seen if鑱絉eplDumpTask and ReplLoadTask are part of the DAG.. *Call Stack:*.,0
+HIVE-20627,We shouldn't clean the old Hive object if it is shared by multiple threads.,0
+HIVE-20627,"When multiple async queries are executed from same session, it leads to multiple async query execution DAGs share the same Hive object which is set by caller for all threads.",0
+HIVE-20652,Error message:.,0
+HIVE-20652,Hive is pushing the join into jdbc driver though the table refer to different data source.,-1
+HIVE-20652,Test case attached.,0
+HIVE-20652,The following query fail:.,0
+HIVE-20817,"7369,M,SMITH,1980-12-17 17:07:29.234234,5000.00,7902,20.",0
+HIVE-20817,"7499,X,ALLEN,1981-02-20 17:07:29.234234,1250.00,7698,30.",0
+HIVE-20817,"7521,X,WARD,1981-02-22 17:07:29.234234,01600.57,7698,40.",0
+HIVE-20817,"7566,M,JONES,1981-04-02 17:07:29.234234,02975.65,7839,10.",0
+HIVE-20817,"7654,X,MARTIN,1981-09-28 17:07:29.234234,01250.00,7698,20.",0
+HIVE-20817,"7698,M,BLAKE,1981-05-01 17:07:29.234234,2850.98,7839,30.",0
+HIVE-20817,"7782,M,CLARK,1981-06-09 17:07:29.234234,02450.00,7839,20.",0
+HIVE-20817,"CREATE TABLE JdbcBasicRead ( empno int, desg string,empname string,doj timestamp,Salary float,mgrid smallint, deptno tinyint ) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';.",0
+HIVE-20817,LOAD DATA LOCAL INPATH '/tmp/art_jdbc/hive/input/input_7columns.txt' OVERWRITE INTO TABLE JdbcBasicRead;.,0
+HIVE-20817,Sample Data.. 鈥.,0
+HIVE-20817,"Select statement: SELECT empno, desg, empname, doj, salary, mgrid, deptno FROM JdbcBasicWrite",0
+HIVE-20817,鈥.,0
+HIVE-20839,"Occurs in some cases in the non-CBO optimized queries, either if CBO is disabled or has failed due to error.",0
+HIVE-4403,"FWIW, I didn't see this happen on a fully-distributed cluster.",-1
+HIVE-4403,Here is what the warnings looked like:.,0
+HIVE-4403,https://github.com/apache/bigtop/blob/master/bigtop-tests/test-artifacts/hive/src/main/resources/seed_data_files/ml-data/u.data.,0
+HIVE-4403,"Load some data into u_data, here is some sample data:.",0
+HIVE-4403,"Perhaps, Hive's job.conf is overriding some final parameters it shouldn't..",-1
+HIVE-4403,Run a simple query on that data (on YARN/MR2),0
+HIVE-4403,This was on a pseudo distributed cluster.,0
+HIVE-4403,"To reproduce, run a query like:.",0
+HIVE-4403,"While working on BIGTOP-885, I saw that Hive was giving a bunch of warnings related to overriding final parameters in job.conf.",0
+HIVE-7114,This is where it is getting created .,0
+HIVE-7114,When starting the HiveServer2 we are seeing an extra Tez AM launched..,-1
+MAPREDUCE-2463,"If ""mapreduce.jobtracker.jobhistory.location"" is configured as HDFS location then either during initialization of Job Tracker (while moving old job history files) or after completion of the job, history files are not moving to done and giving following exception.",0
+MAPREDUCE-2942,"This is failing right after the MAPREDUCE-2655 commit, but Jenkins did report a success when that patch was submitted.",-1
+MAPREDUCE-3005,The app hangs and it turns out to be a NPE in ResourceManager.,0
+MAPREDUCE-3005,This happened two of five times on [~karams]'s sort runs on a big cluster.,0
+MAPREDUCE-3030,"Node Manager is registered with Resource manager and the for every heartbeat, it is printing the above message.",0
+MAPREDUCE-3058,"After clicking on the Job-page, found one of its reduces to be stuck.",0
+MAPREDUCE-3058,"From AM log, also found that this task was sending its update regularly.",0
+MAPREDUCE-3058,"Looking at syslog of the stuck reducer, found this:.",0
+MAPREDUCE-3058,ps -ef | grep java was also showing that process is still alive.,0
+MAPREDUCE-3058,Task-logs' head:.,0
+MAPREDUCE-3058,Task-logs' tail:.,0
+MAPREDUCE-3058,"Which means that tasks is supposed to have stopped within 20 secs, whereas the process itself is stuck for more than 15 hours.",-1
+MAPREDUCE-3058,"While running GridMixV3, one of the jobs got stuck for 15 hrs.",0
+MAPREDUCE-3070,"After stopping NM gracefully then starting NM, NM registration fails with RM with Duplicate registration from the node!",0
+MAPREDUCE-3070,error.,0
+MAPREDUCE-3241,Output of the TraceBuilder doesn't contain the map and reduce task information.,0
+MAPREDUCE-3241,"When we run the TraceBuilder, we get this exception.",0
+MAPREDUCE-3306,Seeing this in NM logs when trying to run jobs.,0
+MAPREDUCE-3333,[~Karams] just found this.,0
+MAPREDUCE-3333,The usual sort job on a 350 node cluster hung due to OutOfMemory and eventually failed after an hour instead of the usual odd 20 minutes.,-1
+MAPREDUCE-3463,"Login node running AppMaster, and killed AppMaster with kill -9.",0
+MAPREDUCE-3463,Now looking at AM logs and found Second AM was shutdown gracefully due to :-,1
+MAPREDUCE-3463,On Client side failed with following:.,0
+MAPREDUCE-3463,"On lookig RM logs found second AM was also lauched, it was saying -:.",0
+MAPREDUCE-3463,Set yarn.resourcemanager.am.max-retries=5 in yarn-site.xml.,0
+MAPREDUCE-3463,Started yarn 4 Node cluster.. First Ran Randowriter/Sort/Sort-validate successfully.,1
+MAPREDUCE-3463,"Then again sort, when job was 50% complete.",0
+MAPREDUCE-3531,Filling this Jira a bit late.,0
+MAPREDUCE-3531,sbummited large sleep job.. Foud that job was not running as RM has not allocated resouces to it.. As this stack is from 30 Nov checkou line number may be different,0
+MAPREDUCE-3531,Started 350 cluster.,0
+MAPREDUCE-3532,.,0
+MAPREDUCE-3532,But verified that MR job runs successfully with random.,0
+MAPREDUCE-3532,I tried following -:.,0
+MAPREDUCE-3532,NM instantiate WebServer as 0 piort e.g.. After that WebServer pick up some random port e.g.. And NM WebServer responds correctly but.,-1
+MAPREDUCE-3532,RM's cluster/Nodes page shows the following -:.,0
+MAPREDUCE-3532,Seems even NM's webserver pick random port but it never gets updated and so NM report 0 as HTTP port to RM causing NM Hyperlinks un-clickable.,0
+MAPREDUCE-3532,When 0 is provided as number in yarn.nodemanager.webapp.address.,0
+MAPREDUCE-3532,Whereas NM:0 is not clickable..,0
+MAPREDUCE-3532,yarn.nodemanager.address=0.0.0.0:0. yarn.nodemanager.webapp.address=0.0.0.0:0. yarn.nodemanager.localizer.address=0.0.0.0:0. mapreduce.shuffle.port=0.,0
+MAPREDUCE-3649,When calling job end notification for oozie the AM fails with the following trace:,0
+MAPREDUCE-3916,# Setting yarn.web-proxy.address and running the service results in the following:.,0
+MAPREDUCE-3916,Seem like yarn proxyserver is not operational when running out of the 0.23.1 RC2 tarball.. # Setting yarn.web-proxy.address to match yarn.resourcemanager.address doesn't disable the proxyserver (althought not setting yarn.web-proxy.address at all correctly disable it and produces a message: org.apache.hadoop.yarn.YarnException: yarn.web-proxy.address is not set so the proxy will not run).,-1
+MAPREDUCE-3916,This contradicts the documentation provided for yarn.web-proxy.address in yarn-default.xml.,-1
+MAPREDUCE-3916,with the following message found in the logs:,0
+MAPREDUCE-3931,[~karams] reported this offline.,0
+MAPREDUCE-3931,Seems that tasks are randomly failing during gridmix runs:,0
+MAPREDUCE-3932,[~karams] reported this offline.,0
+MAPREDUCE-3932,One reduce task gets preempted because of zero headRoom and crashes the AM.,0
+MAPREDUCE-4467,A related issue is MAPREDUCE-4384.,0
+MAPREDUCE-4467,Tbis needs to be wrapped into a "synchronized" block.,-1
+MAPREDUCE-4467,TestMRJobs.testSleepJob fails randomly due to synchronization error in IndexCache:.,0
+MAPREDUCE-4467,The change introduced there removed "synchronized" keyword and hence "info.wait()" call fails.,0
+MAPREDUCE-4657,^M.,0
+MAPREDUCE-4657,{code},0
+MAPREDUCE-4657,"2012-08-31 13:01:00,140 ERROR [Thread-771] mapred.TaskTracker(1766): Caught exception: java.lang.NullPointerException^M.",0
+MAPREDUCE-4657,"2012-08-31 13:01:00,140 ERROR [Thread-771] util.WindowsResourceCalculatorPlugin(69): java.io.IOException: java.lang.InterruptedException^M.",0
+MAPREDUCE-4657,at java.lang.Thread.run(Thread.java:662)^M.,0
+MAPREDUCE-4657,at java.lang.Thread.run(Thread.java:662)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.MiniMRCluster$TaskTrackerRunner.run(MiniMRCluster.java:217)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.MiniMRCluster$TaskTrackerRunner.run(MiniMRCluster.java:217)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.getAvailableVirtualMemoryOnTT(TaskTracker.java:1933)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.getAvailableVirtualMemoryOnTT(TaskTracker.java:1933)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.offerService(TaskTracker.java:1664)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.offerService(TaskTracker.java:1664)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.run(TaskTracker.java:2516)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.run(TaskTracker.java:2516)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.transmitHeartBeat(TaskTracker.java:1834)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.mapred.TaskTracker.transmitHeartBeat(TaskTracker.java:1834)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.Shell$ShellCommandExecutor.execute(Shell.java:540)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.Shell.run(Shell.java:336)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.Shell.runCommand(Shell.java:424)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.WindowsResourceCalculatorPlugin.getAvailableVirtualMemorySize(WindowsResourceCalculatorPlugin.java:126)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.WindowsResourceCalculatorPlugin.getAvailableVirtualMemorySize(WindowsResourceCalculatorPlugin.java:126)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.WindowsResourceCalculatorPlugin.getSystemInfoInfoFromShell(WindowsResourceCalculatorPlugin.java:66)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.WindowsResourceCalculatorPlugin.refreshIfNeeded(WindowsResourceCalculatorPlugin.java:81)^M.,0
+MAPREDUCE-4657,at org.apache.hadoop.util.WindowsResourceCalculatorPlugin.refreshIfNeeded(WindowsResourceCalculatorPlugin.java:83)^M.,0
+MAPREDUCE-4657,When Shell command execution is interrupted then WindowsResourceCalculatorPlugin has NPE.. code}.,0
+MAPREDUCE-4741,For example:.,0
+MAPREDUCE-4741,"The ApplicationMaster is logging WARN and ERROR messages during normal shutdown, and some users are misinterpreting these as serious problems.",0
+MAPREDUCE-4741,Warnings or errors should not be logged if everything is working as intended.,-1
+MAPREDUCE-4825,From the console output from testJobError:,0
+MAPREDUCE-4825,TestMRApp.testJobError is causing AsyncDispatcher to exit with System.exit due to an exception being thrown.,0
+MAPREDUCE-4848,"Recently saw an AM that failed and tried to recover, but the subsequent attempt quickly exited with its own failure during recovery:.",-1
+MAPREDUCE-4848,The RM then launched a third AM attempt which succeeded.,1
+MAPREDUCE-4848,The third attempt saw basically no progress after parsing the history file from the second attempt and ran the job again from scratch.,0
+MAPREDUCE-4913,testMRAppMasterMissingStaging will sometimes cause the JVM to exit due to this error from AsyncDispatcher:.,0
+MAPREDUCE-4913,This can cause a build to fail since the test process exits without unregistering from surefire which treats it as a build error rather than a test failure.,-1
+MAPREDUCE-5349,Full name in the identifier almost always leads to a command script path with length larger than 260 characters which will generate an exception {{DefaultContainerExecutor.launchContainer()}} when launching the container script..,0
+MAPREDUCE-5349,The exception looks like the follows:,0
+MAPREDUCE-5349,"The two unit tests fails due to MiniMRCluster use test class fullname in branch-2, instead of simple name as in trunk, to construct the MiniMRCluster identifier.",0
+MAPREDUCE-5414,"But if i run a single test case,taking testContainerCleanedWhileRunning for example,it will fail without doubt.",-1
+MAPREDUCE-5414,Test case org.apache.hadoop.mapreduce.v2.app.job.impl.TestTaskAttempt fails once in a while when i run all of them together..,0
+MAPREDUCE-5724,Starting JHS without HDFS running fails with the following error:,0
+MAPREDUCE-5744,"It is because the comparator that's defined in this method does not abide by the contract, specifically if p == 0.. Comparator.compare(): http://docs.oracle.com/javase/7/docs/api/java/util/Comparator.html#compare(T, T)",-1
+MAPREDUCE-5744,We ran into a situation where tasks are not getting assigned because RMContainerAllocator$AssignedRequests.preemptReduce() fails repeatedly with the following exception:.,0
+MAPREDUCE-5763,A WARN is being caused by some sort of mismatch between the name of the service (in terms of org.apache.hadoop.service.Service.getName()) and the name of the auxiliary service.,0
+MAPREDUCE-5763,"I'm seeing this in my NodeManager logs,  even though things work fine.",-1
+MAPREDUCE-5837,.,0
+MAPREDUCE-5837,"For example, the MRAppMaster complains about a MR job on Scala:.",-1
+MAPREDUCE-5837,It happens when the additional dependent jar is unavailable to the MRAppMaster.,0
+MAPREDUCE-5837,The problem here is that {{Class.forName()}} can also throw {{NoClassDefError}}.,-1
+MAPREDUCE-5837,The proposed fix is to catch {{NoClassDefError}} at the corresponding places.,0
+MAPREDUCE-5837,"When the MRAppMaster determines whether the job should run in the uber mode, it call {{Class.forName()}} to check whether the class is derived from {{ChainMapper}}:.",0
+MAPREDUCE-5884,.,0
+MAPREDUCE-5884,.,0
+MAPREDUCE-5884,.,0
+MAPREDUCE-5884,--------------------------.,0
+MAPREDUCE-5884,AbstractDelegationTokenSecretManager.cacelToken() gets the owner as full principal name where as the canceller is the short name..,0
+MAPREDUCE-5884,All the caller sends the consistent value as 'canceller' : either short name or full principal name.. Pros: Cleaner.. Cons: A lot of code changes and potential bug injections..,0
+MAPREDUCE-5884,Details:.,0
+MAPREDUCE-5884,Have to change in one place.. Cons: Someone can argue that it is hacky!.,-1
+MAPREDUCE-5884,I'm open for both options..,0
+MAPREDUCE-5884,"In other cases, the value could be full principal name.",0
+MAPREDUCE-5884,"In some cases, it is the short name.",0
+MAPREDUCE-5884,"Option 1: in cancelToken() method, compare with both : short name and full principal name.. Pros: Easy.",0
+MAPREDUCE-5884,Option 2:.,0
+MAPREDUCE-5884,"Please give your opinion.. Btw, how it is working now in most cases?",-1
+MAPREDUCE-5884,REF: FSNamesystem.java.. Possible resolution:.,0
+MAPREDUCE-5884,REF: HistoryClientService.java.,0
+MAPREDUCE-5884,The code shows 'owner' gets the full principal name.,0
+MAPREDUCE-5884,The potential code snippets:.,0
+MAPREDUCE-5884,The short name and the full principal name are usually the same for end-users.,0
+MAPREDUCE-5884,"When the owner of a token tries to explicitly cancel the token, it gets the following error/exception.",0
+MAPREDUCE-5884,Where as the value of 'canceller' depends on who is calling it.,0
+MAPREDUCE-5912,causes Windows local output files to be routed through HDFS:,0
+MAPREDUCE-5931,I had a typo in my script specifying a negative number of reducers for the SleepJob.,0
+MAPREDUCE-5931,"It results in the exception that is far from the root cause, and appeared as a serious issue with the map-side sort.",-1
+MAPREDUCE-5931,This is a minor issue per se.,0
+MAPREDUCE-5952,"The javadoc comment for {{renameMapOutputForReduce}} incorrectly refers to a single map output directory, whereas this depends on LOCAL_DIRS.. mapOutIndex should be set to subMapOutputFile.getOutputIndexFile()",-1
+MAPREDUCE-6002,.,0
+MAPREDUCE-6002,An exception will be raised:.,0
+MAPREDUCE-6002,But it is still possible a MR task fail and report to AM when preemption take effect and the AM hasn't received completed container from RM yet.,-1
+MAPREDUCE-6002,"It will cause the task attempt marked failed instead of preempted.. An example is FileSystem has shutdown hook, it will close all FileSystem instance, if at the same time, the FileSystem is in-use (like reading split details from HDFS), MR task will fail and report the fatal error to MR AM.",-1
+MAPREDUCE-6002,"We should prevent this, because it is possible other exceptions happen when shutting down, we shouldn't report any of such exceptions to AM.",0
+MAPREDUCE-6002,"With MAPREDUCE-5900, preempted MR task should not be treat as failed.",-1
+MAPREDUCE-6091,But MR's ClientServiceDelegate was never modified to change its behavior.,-1
+MAPREDUCE-6091,"For example,.",0
+MAPREDUCE-6091,"If you query the job status of a job that rolled off the RM view via YARNRunner.getJobStatus(), it fails with an ApplicationNotFoundException.",0
+MAPREDUCE-6091,"Prior to 2.1.0, it used to be able to fall back onto the job history server and get the status..",0
+MAPREDUCE-6091,This appears to be introduced by YARN-873.,0
+MAPREDUCE-6091,YARN-873 changed ClientRMService to throw an ApplicationNotFoundException on an unknown app id (from returning null).,0
+MAPREDUCE-6213,Log as below:,0
+MAPREDUCE-6213,"When DNS failed for a time, all MapReduce jobs which completed during that time got failed.",0
+MAPREDUCE-6259,-1 job submit time cause IllegalArgumentException when parse the Job history file name and JOB_INIT_FAILED cause -1 job submit time in JobIndexInfo.. We found the following job history file name which cause IllegalArgumentException when parse the job status in the job history file name..,0
+MAPREDUCE-6259,1. .,0
+MAPREDUCE-6259,10.. JobAbortCompletedTransition#transition will call JobImpl#unsuccessfulFinish which will send JobUnsuccessfulCompletionEvent with finish time.. 11.. JobUnsuccessfulCompletionEvent will be handled by JobHistoryEventHandler#handleEvent with type EventType.JOB_FAILED.,0
+MAPREDUCE-6259,2.. JobEventType.JOB_INIT is sent to JobImpl from MRAppMaster#serviceStart.,0
+MAPREDUCE-6259,"3.. after JobImpl received JobEventType.JOB_INIT, it call InitTransition#transition.",0
+MAPREDUCE-6259,4.. then the exception happen from setup(job) in InitTransition#transition before JobSubmittedEvent is handled.. JobSubmittedEvent will update the job submit time.,0
+MAPREDUCE-6259,"5.. Due to the IOException from  JobImpl#setup, the new job is still at state JobStateInternal.NEW.",0
+MAPREDUCE-6259,7.. JobImpl will send CommitterJobAbortEvent in  InitFailedTransition#transition .,0
+MAPREDUCE-6259,8.. CommitterJobAbortEvent will be handled by CommitterEventHandler#handleJobAbort which will send JobAbortCompletedEvent(JobEventType.JOB_ABORT_COMPLETED).,0
+MAPREDUCE-6259,"9.. After JobImpl receives the JOB_ABORT_COMPLETED, it will call JobAbortCompletedTransition#transition and enter state JobStateInternal.FAILED.",0
+MAPREDUCE-6259,a job is created at MRAppMaster#serviceStart and  the new job is at state JobStateInternal.NEW after created.,0
+MAPREDUCE-6259,"At the following code of MRAppMaster#serviceStart, The MR AM detect the state is not INITED and send a JOB_INIT_FAILED event.. 6.. After JobImpl receives the JOB_INIT_FAILED, it will call InitFailedTransition#transition and enter state JobStateInternal.FAIL_ABORT.",0
+MAPREDUCE-6259,"Based on the filename, you can see submitTime is -1, finishTime is 1423572836007 and jobStartTime is 1423572836007..",0
+MAPREDUCE-6259,"Based on the following code, you can see the JobIndexInfo#finishTime is set correctly but JobIndexInfo#submitTime and  JobIndexInfo#jobStartTime are still -1..",-1
+MAPREDUCE-6259,"Due to the exception, the submit time is still the initial value -1..",0
+MAPREDUCE-6259,It is because jobStartTime is handled specially in FileNameIndexUtils#getDoneFileName:,0
+MAPREDUCE-6259,The error job history file name in our log is "job_1418398645407_115853--1-worun-kafka%2Dto%2Dhdfs%5Btwo%5D%5B15+topic%28s%29%5D-1423572836007-0-0-FAILED-root.journaling-1423572836007.jhist".,0
+MAPREDUCE-6259,The following is the sequences to get -1 job submit time:.,0
+MAPREDUCE-6259,"The jobStartTime is not -1, and  jobStartTime is the same as  finishTime..",0
+MAPREDUCE-6259,The stack trace for the IllegalArgumentException is.,0
+MAPREDUCE-6259,This is the code InitTransition#transition.,0
+MAPREDUCE-6259,This is the code JobImpl#setup.,0
+MAPREDUCE-6259,"when IOException happened in JobImpl#setup, the Job submit time in JobHistoryEventHandler#MetaInfo#JobIndexInfo will not be changed and the Job submit time will be its [initial value -1|https://github.com/apache/hadoop/blob/trunk/hadoop-mapreduce-project/hadoop-mapreduce-client/hadoop-mapreduce-client-app/src/main/java/org/apache/hadoop/mapreduce/jobhistory/JobHistoryEventHandler.java#L1185]..",0
+MAPREDUCE-6273,"HistoryFileManager should check whether summaryFile exists to avoid FileNotFoundException causing HistoryFileInfo into MOVE_FAILED state,.",0
+MAPREDUCE-6273,I saw the following error message:.,0
+MAPREDUCE-6273,"We should avoid this error by checking whether summaryFile exists before call getJobSummary, otherwise we will see this error happen every time scanIntermediateDirectory is called.",-1
+MAPREDUCE-6357,.,0
+MAPREDUCE-6357,.,0
+MAPREDUCE-6357,"After spending the afternoon debugging a user job where reduce tasks were failing on retry with the below exception, I think it would be worthwhile to add a note in the MultipleOutputs.write() documentation, saying that absolute paths may cause improper execution of tasks on retry or when MR speculative execution is enabled.",-1
+MAPREDUCE-6357,"As discussed in MAPREDUCE-3772, when the baseOutputPath passed to MultipleOutputs.write() is an absolute path (or more precisely a path that resolves outside of the job output-dir), the concept of output committing is not utilized.",0
+MAPREDUCE-6357,"In this case, the user read thru the MultipleOutputs docs and was assuming that everything will be working fine, as there are blog posts saying that MultipleOutputs does handle output commit.",0
+MAPREDUCE-6492,Causing NPE on {{taskAttempt.container.getNodeHttpAddress()}} .,0
+MAPREDUCE-6492,For {{TaskAttemptImpl#DeallocateContainerTransition}} {{sendJHStartEventForAssignedFailTask}} is send for TaskAttemptStateInternal.UNASSIGNED also ..,0
+MAPREDUCE-6492,Log aggregation fail for mapreduce application.,0
+MAPREDUCE-6554,Create scenario so that MR app master gets preempted.. On next MRAppMaster launch tried to recover previous job history file {{MRAppMaster#parsePreviousJobHistory}}.,0
+MAPREDUCE-6554,EventReader(EventReader stream),0
+MAPREDUCE-6577,"As a result, any code that needs the hadoop native library in the MR AM will fail.",0
+MAPREDUCE-6577,"For example, an uber-AM with lz4 compression for the mapper task will fail:",0
+MAPREDUCE-6577,"If yarn.app.mapreduce.am.admin.user.env (or yarn.app.mapreduce.am.env) is not configured to set LD_LIBRARY_PATH, MR AM will fail to load the native library:.",0
+MAPREDUCE-6649,.,0
+MAPREDUCE-6649,The following command does not produce any failure info as to why the job failed.,0
+MAPREDUCE-6649,"To contrast, here is a command and associated command line output to show a failed job that gives the correct failiure info.",0
+MAPREDUCE-6693,Job history entry missing when JOB name is of {{mapreduce.jobhistory.jobname.limit}} character.,0
+MAPREDUCE-6693,Looks like 50 character check is going wrong,0
+MAPREDUCE-6836,The web page itself renders fine.,0
+MAPREDUCE-6836,"When I navigate the MR job web UI and click the configuration link, the AM shows an exception:.",0
+MAPREDUCE-6898,TestKill.testKillTask() can fail if the async dispatcher thread is slower than the test's thread.. We have to wait until the job's internal state is {{JobInternalState.RUNNING}} and not {{JobInternalState.SETUP}}.,0
+MAPREDUCE-7059,Does anyone have better solution?.,0
+MAPREDUCE-7059,"Running teragen failed in the version of hadoop-3.1, and hdfs server is 2.8..",0
+MAPREDUCE-7059,The detailed exception trace is:,0
+MAPREDUCE-7059,The reason of failing is 2.8 HDFS does not have setErasureCodingPolicy.. one  solution is parsing RemoteException in JobResourceUploader#disableErasure like this:.,0
+MAPREDUCE-7077,Launch wordcount example with pipe.,0
+MAPREDUCE-7077,Steps:.,0
+MAPREDUCE-7077,The application fails with below stacktrace,0
+MAPREDUCE-838,"In MAPREDUCE-837, job succeeded with empty output even though all the tasks were throwing IOException at commiter.commitTask.",-1
+STORM-1114,"In production for some trident topology, we met the bug that some workers are trying to create a zk-node that is already existent or delete a zk node that has already been deleted.",-1
+STORM-1114,This causes the worker process to die..  .,0
+STORM-1114,We dissect the problem and figure out that there exists racing condition in trident TransactionalState's zk-node create and delete codes.. failure stack trace in worker.log:,0
+STORM-1208,"A stack trace is seen on the UI via its thrift connection to nimbus.. On nimbus, a stack trace similar to the following is seen:",0
+STORM-1470,"We already shade commons-codec:commons-codec, but we don't apply that shading to org.apache.hadoop:hadoop-auth.",0
+STORM-1496,1,0
+STORM-1496,Blobstore periodically throws exception:.,0
+STORM-1496,Deploy word count topology.. 3.,0
+STORM-1496,Kill word count topology.. 4.,0
+STORM-1496,Monitor nimbus.log,0
+STORM-1496,Setup one node cluster.. 2.,0
+STORM-1496,Steps to reproduce:.,0
+STORM-1520,-Basic functionality does not seem to be affected.-.,0
+STORM-1520,Nimbus becomes unresponsive and needs to be manually restarted.,-1
+STORM-1520,Placeholder until I can gather more information for reproducing the issue..,0
+STORM-1520,The following appears in nimbus.log after deploying/undeploying topologies:.,0
+STORM-1596,Here is sample log from such a scenarios:,0
+STORM-1596,"With multiple threads accessing same {{Subject}}, it can cause {{ServiceTicket}} in use be by one thread be destroyed by another thread.. Running BasicDRPCTopology with high parallelism in secure cluster would reproduce the issue..",-1
+STORM-1672,Component page in UI,0
+STORM-1941,"Please take a look at ctime, mtime, and ephemeralOwner.. Ephemeral owner session was already closed from nimbus side but there's possible for node to be not deleted immediately, so new session doesn't create new node but set the value to ephemeral node for other session which is already closed.. *And eventually that node is deleted although session 0x355a647bd8c0000 is alive.*.",-1
+STORM-1941,We can delete the node first and set ephemeral node when reconnect event handler is called.,0
+STORM-1941,"When zookeeper reconnect happens, nimbus registry can be deleted though nimbus is alive.. Below is zookeeper node for nimbus registry.. Below is transaction log for that node..",-1
+STORM-1977,2,0
+STORM-1977,3,0
+STORM-1977,4,0
+STORM-1977,5,0
+STORM-1977,6,0
+STORM-1977,.,0
+STORM-1977,1. comment cleanup-corrupt-topologies!,0
+STORM-1977,"7. getClusterInfo is requested to Nimbus 2, and Nimbus 2 gets crashed.",0
+STORM-1977,"Before BlobStore, only nimbuses which is having all topology codes can gain leadership, otherwise they give up leadership immediately.",0
+STORM-1977,Easiest way to reproduce is:.,0
+STORM-1977,"from nimbus.clj (It's a quick workaround for resolving STORM-1976), and patch Storm cluster.",0
+STORM-1977,"I don't know it's intended or not, but it incurs one of nimbus to gain leadership which doesn't have replicated topology code, and the nimbus will be crashed when getClusterInfo is requested..",-1
+STORM-1977,Kill Nimbus 1.,0
+STORM-1977,Launch Nimbus 1 (leader).,0
+STORM-1977,Launch Nimbus 2 from different node.,0
+STORM-1977,Log:,0
+STORM-1977,Nimbus 2 gains leadership .,0
+STORM-1977,Run topology.,0
+STORM-1977,"While introducing BlobStore, this logic is removed..",0
+STORM-1977,"While investigating STORM-1976, I found that there're cases for nimbus to not having topology codes.",0
+STORM-2142,For others it should run suicide function.,0
+STORM-2142,"When EvaluationFilter / EvaluationFunction throws Exception, async loop for the executor is died but others will continue to work..",-1
+STORM-2142,"When InterruptedException or InterruptedIOException is thrown, it should just leave a log and shouldn't run suicide function.",-1
+STORM-2142,"While looking into detail, I found that ReportErrorAndDie implementation seems odd - completely opposite behavior compared to 1.x :report-error-and-die..",-1
+STORM-2158,{{OutOfMemoryError}} is thrown by Nimbus' {{SimpleTransportPlugin}} if malformed Thrift request is posted:.,0
+STORM-2158,In nimbus.log:.,0
+STORM-2158,The problem is caused by the lack of specification of the {{maxReadBufferBytes}} of {{THsHaServer}}'s arguments.,0
+STORM-2275,I am copying last few lines of the nimbus logs including stack trace..,0
+STORM-2275,The problem is that we are assuming that the base will be non-null which is incorrect leading to NPE.,-1
+STORM-2279,I am using the vagrant setup.,0
+STORM-2279,"On the ui page that open, I see the following error.. Url: http://node1:8080/component.html?id=SlidingTimeCorrectness-winSec1slideSec1VerificationBolt&topology_id=SlidingWindowTestw1s1-2-1483646178.",0
+STORM-2279,"The problem is that we expect the index to be positive, but since it is a mod of hashcode it can be negative.. https://github.com/apache/storm/blob/2b82fc8b5328fd4fbd680998c6051d9496c102d7/storm-core/src/jvm/org/apache/storm/daemon/nimbus/Nimbus.java#L3605",-1
+STORM-2279,There is a stacktrace corresponding to this in nimbus.log showing IndexOutOfBound error:.,0
+STORM-2279,"With latest storm code, I am unable to open ui and see bolt information.",0
+STORM-2321,After the restart the nimbus failed to come up.,0
+STORM-2321,The nimbus was restarted during HA testing.,0
+STORM-2324,.,0
+STORM-2324,"After unpacking the topo jar file, supervisor.clj establishes a symlink to the resources directory without checking if the topology jar actually had a resources directory.",-1
+STORM-2324,Assessment:.,0
+STORM-2324,"Since Storm 1.0,  due to STORM-876,.",0
+STORM-2324,"Subsequently when the worker-launcher tool runs and tries to chmod the resources dir, it fails.",0
+STORM-2324,This leads to a broken symlink.,0
+STORM-2324,This stalls the topology execution.,0
+STORM-2324,"When the topo jar does not contain a resources directory, the topology fails if.",0
+STORM-2400,.,0
+STORM-2400,"But in this case, NoNode should have been retried.",-1
+STORM-2400,I could not find any APIs on CuratorClient to configure the kind of KeeperException codes to be retried.,-1
+STORM-2400,I guess it hits a race condition where a participant node is retrieved but when it invokes LeaderSelector#getLeader() it would have been removed because of session timeout and it throws KeeperException with NoNode code.,-1
+STORM-2400,Intermittent Exception found with the stack trace:,0
+STORM-2400,It does not retry as the RetryLoop retries only for connection/session timeouts.,0
+STORM-2400,It may be good to have a way to take what kind of errors should be retried in org.apache.curator.framework.CuratorFrameworkFactory.Builder APIs..,0
+STORM-2400,It may be possible participant's ephemeral ZK node is removed because its connection/session is closed.. You can see the below code at https://github.com/apache/curator/blob/master/curator-recipes/src/main/java/org/apache/curator/framework/recipes/leader/LeaderLatch.java#L451.,0
+STORM-2400,org.apache.curator.framework.recipes.leader.LeaderLatch#getLeader() throws KeeperException with Code#NONODE intermittently as mentioned in the stack trace below.,0
+STORM-2400,This issue is reported to Curator with CURATOR-358.,0
+STORM-2440,"Almost all our topologies just silently stopped processing data from some of the topics/partitions, an the only way to fix this situation was to restart those topologies..",0
+STORM-2440,"During two somewhat extended outages of our Kafka cluster, we experienced a problem with our Storm topologies consuming data from that Kafka cluster..",0
+STORM-2440,I see that this has been fixed in the Java port of the executor code by explicitly excluding {{java.net.SocketTimeoutException}} from the condition..,0
+STORM-2440,"I tracked down one occurrence of the failure to this worker, which was running one the KafkaSpouts:.",0
+STORM-2440,I will open a pull request with a backport tomorrow.,0
+STORM-2440,The thread that calls the {{.nextTuple}} method of the spout is exited on the other hand..,0
+STORM-2440,"There were no more outputs in the log after that until the toplogy was manually killed.. As you can see the {{java.net.SocketTimeoutException}} escapes the storm-kafka code (probably a problem in and of itself), but the worker is not killed.",-1
+STORM-2440,This is the culprit line: https://github.com/apache/storm/blob/v1.1.0/storm-core/src/clj/org/apache/storm/daemon/executor.clj#L270.,0
+STORM-2443,Here's stacktrace from Nimbus log:,0
+STORM-2496,(This is completely fine for non-secured cluster.),0
+STORM-2496,"In this case, Supervisor fails to get artifact and crashes in result..",0
+STORM-2496,"Since uploaded artifacts are uploaded once and shared globally, other user might need to use uploaded artifact.",0
+STORM-2496,"So we need to upload artifacts with READ permission to all, or at least supervisor should be able to read them at all.",0
+STORM-2496,"When we submit topology via specific user with dependency artifacts, submitter uploads artifacts to the blobstore with user which runs the submission..",0
+STORM-2518,"While adding ACL to USER from uploading artifacts, ""name"" field is actually optional for thrift specification, but Nimbus reads the value without checking null while fixing ACL.. Uploading artifacts fails and topology submission also fails.",-1
+STORM-2568,.,0
+STORM-2568,.,0
+STORM-2568,but I think that fixing 'getTopicsString of NamedSubscription.java in org.apache.storm.kafka.spout' is might be better.,0
+STORM-2568,Hello.,0
+STORM-2568,I fixed the code that remove square brackets in TopologySpoutLag.java for my case.,0
+STORM-2568,"I've tried to use storm-kafka-monitor, and it works fine on command line If I changed 'toollib/storm-kafka-monitor-*.jar' to 'toollib/storm-kafka-monitor-1.1.0.jar'.. but it gives empty result when I call below api.. -I think that needs to fix ""groupid"" to ""group.id"" in TopologySpoutLag.java I debug it, but groupid is right.-.",-1
+STORM-2568,so String.valueOf returns value with square brackets..,0
+STORM-2568,the reason was topics has square brackets in command.,0
+STORM-2568,the square brackets automatically added because of this.,0
+STORM-2568,topics is Collections.,0
+STORM-2682,"When supervisor is started, it dies after about 30s like so:",0
+STORM-2700,1,0
+STORM-2700,Create a blobstore with permission set to one user (e.g mapredqa).. 2.,0
+STORM-2700,ethan).,0
+STORM-2700,"is set, blobstore still checks ACL..",-1
+STORM-2700,Reproduce:.,0
+STORM-2700,Submit a topology with topology.blobstore.map config as someone else (e.g.,0
+STORM-2700,When .,0
+STORM-2736,"But after a new leader is chosen, we then see:.",-1
+STORM-2736,"I can't figure out yet how to cause the conditions that lead to Zookeeper becoming unresponsive, but it is possible to reproduce the {{BlobStoreUtils}} error by restarting Zookeeper..",-1
+STORM-2736,"If I add a check similar to [this|https://github.com/apache/storm/blob/v1.1.1/storm-core/src/jvm/org/apache/storm/blobstore/BlobStoreUtils.java#L244] for a node which exists but has no children, the error goes away.",0
+STORM-2736,over and over..,-1
+STORM-2736,"Sometimes, after our topologies have been running for a while, Zookeeper does not respond within an appropriate time and we see.",-1
+STORM-2736,"That's fine, and we probably need to allocate more resources.",0
+STORM-2736,"The problem, I think, is that the loop [here|https://github.com/apache/storm/blob/v1.1.1/storm-core/src/jvm/org/apache/storm/blobstore/BlobStoreUtils.java#L175] never executes because the {{nimbusInfos}} list is empty.",0
+STORM-2873,Below is exception we get when zk hits this issue:,0
+STORM-2873,The backpressure implementation deletes the znode when not relevant but that hits zookeeper issue of too frequent deletion and creation or same path for ephemeral znode.,-1
+STORM-2986,.,0
+STORM-2986,.,0
+STORM-2986,But from logviewer.log:.,-1
+STORM-2986,But it's better to have it solve fixed.,0
+STORM-2986,It's because there is no workers-artifacts directory at the very beginning before submitting any topologies.,0
+STORM-2986,So I set.,0
+STORM-2986,to start LogCleaner thread.,0
+STORM-2986,Users鑱絚an fix it by鑱絤anually creating the directory.,0
+STORM-2988,.,0
+STORM-2988,"As per documentation, I configured metrics v2 in my storm.yaml using the following configuration:.",0
+STORM-2988,Federico Chiacchiaretta,0
+STORM-2988,Is this a bug or am I missing something in configuration?.,-1
+STORM-2988,Looking at org.apache.storm.metrics2.reporters.JmxStormReporter.getMetricsJMXDomain() I found that it passes "reporterConf" map to Utils.getString() instead of a string:.,-1
+STORM-2988,"Regards,.",0
+STORM-2988,The "prepare" method in org.apache.storm.daemon.metrics.reporters.JmxPreparableReporter used by nimbus and supervisor correctly passes a string to Utils.getString():.,1
+STORM-2988,"When I start nimbus and supervisors everything works properly, I can see metrics reported to JMX, and logs (for nimbus in this example) report:.",0
+STORM-2988,"When I submit a topology, workers cannot initialize and report this error.",0
+STORM-3012,.,0
+STORM-3012,.,0
+STORM-3012,.,0
+STORM-3012,.,0
+STORM-3012,.,0
+STORM-3012,.,0
+STORM-3012,And the null result is inserted into [https://github.com/apache/storm/blob/master/storm-client/src/jvm/org/apache/storm/pacemaker/PacemakerClientPool.java#L65-L66].,0
+STORM-3012,and this is where NPE聽happens,0
+STORM-3012,Below is the nimbus.log when I restarted pacemaker.,0
+STORM-3012,it returns null result.,0
+STORM-3012,Nimbus crashed because of NPE.. 聽.,0
+STORM-3012,"This is because when [https://github.com/apache/storm/blob/master/storm-client/src/jvm/org/apache/storm/pacemaker/PacemakerClient.java#L195-L198]聽happens,.",0
+STORM-3012,which leads to [https://github.com/apache/storm/blob/master/storm-client/src/jvm/org/apache/storm/cluster/PaceMakerStateStorage.java#L195].,0
+STORM-3013,"Exception follows,",0
+STORM-3013,"Hi, I have deactivated the storm topology & then if I produce any records into Kafka, Storm throws an exception.",0
+STORM-3073,"I think it can also happen if nextTuple emits too many tuples in a call, or if too many metrics ticks happen between pendingEmit flushes, since metrics ticks also trigger emits.",-1
+STORM-3073,"If the pendingEmits queue is already close to full when this happens, we might hit the error above.",-1
+STORM-3073,It looks to me like we're preventing the queue from filling by emptying it between calls to nextTuple at https://github.com/apache/storm/blob/master/storm-client/src/jvm/org/apache/storm/executor/spout/SpoutExecutor.java#L184..,0
+STORM-3073,Saw this while running the https://github.com/apache/storm/blob/master/examples/storm-loadgen/src/main/java/org/apache/storm/loadgen/ThroughputVsLatency.java topology..,0
+STORM-3073,"The executor's pendingEmits queue is full, and the executor then tries to add another tuple.",0
+STORM-3073,"The TVL topology reemits failed tuples directly from the fail method, which can be triggered by tick tuples.",0
+STORM-3082,[~aniket.alhat] reported on the mailing list that he got an NPE when trying to start the Trident spout..,0
+STORM-3082,"I think it's reasonable that people should be able to subscribe to topics that don't exist yet, and the spout should pick up the new topics eventually.. We should check for null here https://github.com/apache/storm/blob/93ed601425a79759c0189a945c6b46266e5c9ced/external/storm-kafka-client/src/main/java/org/apache/storm/kafka/spout/subscription/NamedTopicFilter.java#L55, and maybe log a warning if the returned value is null.",0
+STORM-3082,It looks to me like the partitionsFor method on the consumer will return null if the specified topic doesn't exist.,0
+STORM-3082,"We didn't account for this in the filter, because the return type of the method is a List, and we assumed it wouldn't be null..",0
+STORM-3096,.,0
+STORM-3096,.,0
+STORM-3096,"After the fix went in, we still see the error occurring.",-1
+STORM-3096,I tracked the problem down to鑱絠dsOfTopologiesWithPrivateWorkerKeys() at [https://github.com/apache/storm/blob/master/storm-server/src/main/java/org/apache/storm/daemon/nimbus/Nimbus.java#L893.],0
+STORM-3096,STORM-3053 attempted to fix the race condition where a nimbus timer causes doCleanup() to delete the blobs during topology submission.,0
+STORM-3096,"The previous change to wait to delete topologies is useful, but should be moved after all the topologies are discovered.",0
+STORM-3103,.,0
+STORM-3103,.,0
+STORM-3103,At times this would cause leadership confusion:.,-1
+STORM-3103,We should endeavor to shutdown cleanly.,0
+STORM-3103,"When debugging an Nimbus NPE that caused restarts, I noticed that a forced halt occurred:.",-1
+STORM-3117,.,0
+STORM-3117,Nimbus then continually restarts:,0
+STORM-3117,The following test pseudo-code causes issues:.,0
+STORM-3117,This causes nimbus to get stuck and restart:.,0
+STORM-3118,Nimbus has issues with Pacemaker:.,0
+STORM-3118,Prevents topology submission:,0
+STORM-3168,.,0
+STORM-3168,"I restarted the supervisor, and it started logging again.",0
+STORM-3168,"I turned on debug logging, and was expecting a cleanup debug message every 30 seconds ([https://github.com/apache/storm/blob/master/storm-server/src/main/java/org/apache/storm/localizer/AsyncLocalizer.java#L606).]",-1
+STORM-3168,I was investigating these blobstore download messages which keep repeating for hours in the supervisor (and nimbus logs).,0
+STORM-3168,It appears to have crashed with some error.,0
+STORM-3168,It did not log.,-1
+STORM-3168,We should make sure the cleanup runs continuously and logs any failures to investigate.,0
+YARN-1032,"This exception was see in RackResolver.java as NPE, ultimately caught in RMContainerAllocator.",0
+YARN-1032,We found a case where our rack resolve script was not returning rack due to problem with resolving host address.,0
+YARN-1149,"When nodemanager receives a kill signal when an application has finished execution but log aggregation has not kicked in, InvalidStateTransitonException: Invalid event: APPLICATION_LOG_HANDLING_FINISHED at RUNNING is thrown",0
+YARN-1274,"But the directory is created only if there are resources to localize by the LCE localization command, if there are not resourcdes to localize, LCE localization never executes and launching fails reporting 255 exit code and the NM logs have something like:",0
+YARN-1274,LCE container launch assumes the usercache/USER directory exists and it is owned by the user running the container process..,0
+YARN-1374,Resource Manager is failing to start with the below ConcurrentModificationException.,0
+YARN-1409,org.apache.hadoop.mapred.TestJobCleanup can fail because of RejectedExecutionException by NonAggregatingLogHandler.,0
+YARN-1409,This problem is caused by handling APPLICATION_FINISHED events after calling sched.shotdown() in NonAggregatingLongHandler#serviceStop().,0
+YARN-1661,/usr/bin/yarn  org.apache.hadoop.yarn.applications.distributedshell.Client -jar <distributed shell jar> -shell_command ls.,0
+YARN-1661,Last line would indicate AM failure even though container logs print good ls result.,-1
+YARN-1661,Open AM logs.,0
+YARN-1661,Run:.,0
+YARN-1675,But the debug logs show negative vcores-,-1
+YARN-1675,I dont see any stacktraces in logs.,0
+YARN-1678,Come on FS.,0
+YARN-1678,We really don't need to know every time a node with a reservation on it heartbeats.,-1
+YARN-1689,In the RM log I see the following exception:,0
+YARN-1689,"When running some Hive on Tez jobs, the RM after a while gets into an unusable state where no jobs run.",-1
+YARN-1692,The map that  gets returned by FSSchedulerApp.getResourceRequests() are iterated on without proper synchronization.,-1
+YARN-1692,We saw a ConcurrentModificationException thrown in the fair scheduler:.,0
+YARN-174,"The NM then calls System.exit(-1), which makes the unit test exit and produces an error that is hard to track down.",-1
+YARN-1839,App 1 AM attempt 2 will start.,0
+YARN-1839,It won't be able to launch a task container with this error stack trace in AM logs:,-1
+YARN-1839,Preempt app1 out.,0
+YARN-1839,Run MR sleep job as app 1.,0
+YARN-1839,Run MR sleep job as app 2.,0
+YARN-1839,Take entire cluster.,0
+YARN-1839,Turn on capacity scheduler preemption.,0
+YARN-1839,Use single-node cluster.,0
+YARN-1839,Wait till app 2 finishes.,0
+YARN-196,"If NM is started before starting the RM ,NM is shutting down with the following error",0
+YARN-2124,But ProportionalCapacityPreemptionPolicy get initialized before CapacityScheduler initialized.,-1
+YARN-2124,NPE will be raised when RM start.,0
+YARN-2124,So ResourceCalculator will set to null in ProportionalCapacityPreemptionPolicy.,0
+YARN-2124,This is caused by ProportionalCapacityPreemptionPolicy needs ResourceCalculator from CapacityScheduler.,0
+YARN-2124,"When I play with scheduler with preemption, I found ProportionalCapacityPreemptionPolicy cannot work.",0
+YARN-2230,"* Either documentation or code should be corrected (unless this exception is handled elsewhere accordingly, but it looks that it is not)..",-1
+YARN-2230,"According to documentation - yarn-default.xml http://hadoop.apache.org/docs/current/hadoop-yarn/hadoop-yarn-common/yarn-default.xml, the request should be capped to the allocation limit..",-1
+YARN-2230,"mapreduce.map.cpu.vcores  is larger than yarn.scheduler.maximum-allocation-vcores), then InvalidResourceRequestException is thrown - https://svn.apache.org/repos/asf/hadoop/common/trunk/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-resourcemanager/src/main/java/org/apache/hadoop/yarn/server/resourcemanager/scheduler/SchedulerUtils.java.",0
+YARN-2230,"Otherwise, it is non obvious to discover why a job does not make any progress..",0
+YARN-2230,The same looks to be related to memory.,0
+YARN-2230,"The warnings/exceptions are thrown at the scheduler (RM) side e.g.. * IMHO, such an exception should be forwarded to client.",-1
+YARN-2230,"This behavior is confusing, because when such a job (with mapreduce.map.cpu.vcores is larger than yarn.scheduler.maximum-allocation-vcores) is submitted, it does not make any progress.",-1
+YARN-2230,This means that:.,0
+YARN-2230,When a user requests more vcores than the allocation limit (e.g.,0
+YARN-2273,A few cycles later YARN was crippled.,0
+YARN-2273,"After the second time the node went away, the RM produced this:.",0
+YARN-2273,One DN experienced memory errors and entered a cycle of rebooting and rejoining the cluster.,0
+YARN-2273,Restarting the RM resolved it.,0
+YARN-2273,The RM was running and jobs could be submitted but containers were not assigned and no progress was made.,0
+YARN-2308,And RM will be failed to restart..,0
+YARN-2308,I encountered a NPE when RM restart.,0
+YARN-2308,"So when RM restarts, it tries to recover history applications, and when any of queues of these applications removed, NPE will be raised.",0
+YARN-2308,"This is caused by queue configuration changed, I removed some queues and added new queues.",0
+YARN-241,After restarting the Node Manager it fails to launch containers with the below exception.,0
+YARN-2612,.,0
+YARN-2612,1) RM sends completed containers to AM.,0
+YARN-2612,"After receiving it, AM thinks it has done the work and does not need resource, so it does not call allocate.. 2) When AM finishes, it could not ack to RM because AM itself has not finished yet.. We think when RMAppAttempt call BaseFinalTransition, it means AppAttempt finishes, then RM could send this AppAttempt's completed containers to NM.",0
+YARN-2612,"If AM does not call allocate, which means that AM does not ack RM, RM will not ack NM.",0
+YARN-2612,"In YARN-1372, NM will report completed containers to RM until it gets ACK from RM.",0
+YARN-2612,"Some completed containers which already pulled by AM never reported back to NM, so NM continuously report the completed containers while AM had finished.",0
+YARN-2612,We are testing RM work preserving restart and found the following logs when we ran a simple MapReduce task "PI".,0
+YARN-2612,We([~chenchun]) have observed these two cases when running Mapreduce task 'pi':.,0
+YARN-2617,"* For NonAggregatingLogHandler, it wait for YarnConfiguration.NM_LOG_RETAIN_SECONDS which is 3 * 60 * 60 sec by default, then it will be scheduled to delete Application logs and send the event.. * For LogAggregationService, it might fail(e.g.",0
+YARN-2617,.,0
+YARN-2617,.,0
+YARN-2617,"But it will only remove appId from  'app.context.getApplications()' when ApplicaitonImpl received evnet 'ApplicationEventType.APPLICATION_LOG_HANDLING_FINISHED' , however NM might receive this event for a long time or could not receive.",-1
+YARN-2617,"if user does not have HDFS write permission), and it will not send the event.",0
+YARN-2617,"In the patch for YARN-1372, ApplicationImpl on NM should guarantee to  clean up already completed applications.",0
+YARN-2617,NM continuously reported completed containers whose Application had already finished while AM had finished.,0
+YARN-2617,We([~chenchun]) are testing RM work preserving restart and found the following logs when we ran a simple MapReduce task "PI".,0
+YARN-2649,at junit.framework.Assert.assertEquals(Assert.java:67).,0
+YARN-2649,at junit.framework.Assert.fail(Assert.java:50).,0
+YARN-2649,at junit.framework.Assert.failNotEquals(Assert.java:287).,0
+YARN-2649,at org.apache.hadoop.yarn.server.resourcemanager.applicationsmanager.TestAMRMRPCNodeUpdates.testAMRMUnusableNodes(TestAMRMRPCNodeUpdates.java:125).,0
+YARN-2649,at org.apache.hadoop.yarn.server.resourcemanager.MockAM.waitForState(MockAM.java:82).,0
+YARN-2649,at org.apache.hadoop.yarn.server.resourcemanager.MockRM.sendAMLaunched(MockRM.java:382).,0
+YARN-2649,Here is the log when this happens.,0
+YARN-2649,junit.framework.AssertionFailedError: AppAttempt state is not correct (timedout) expected:<ALLOCATED> but was:<SCHEDULED>.,0
+YARN-2649,Sometimes the test fails with the following error:.,0
+YARN-2649,testAMRMUnusableNodes(org.apache.hadoop.yarn.server.resourcemanager.applicationsmanager.TestAMRMRPCNodeUpdates)  Time elapsed: 41.73 sec  <<< FAILURE!.,0
+YARN-2649,"That is possible, given the test only waits for RMAppState.ACCEPTED before having NM sending heartbeat.",0
+YARN-2649,This can be reproduced using custom AsyncDispatcher with CountDownLatch.,0
+YARN-2649,"When this happens, SchedulerEventType.NODE_UPDATE was processed before RMAppAttemptEvent.ATTEMPT_ADDED was processed.",0
+YARN-2671,"After YARN-2493, app submission goes wrong with the following exception:.",0
+YARN-2671,"This is because resource is putting into ResourceRequest of ApplicationSubmissionContext, but not directly into ApplicationSubmissionContext, therefore the sanity check won't get resource object from context.",0
+YARN-2742,(note 2 spaces).,0
+YARN-2742,"FairSchedulerConfiguration is very strict about the number of space characters between the value and the unit: 0 or 1 space.. For example, for values like the following:.",-1
+YARN-2742,This above line fails to parse:,0
+YARN-2790,Still we see NM log aggregation fail due to token expiry error.,-1
+YARN-2790,"We shorten hdfs delegation token lifetime, set RM to act as as a proxy user in order to be able to renew the token on behalf of a user submitting the application.",0
+YARN-2816,"2014-10-30 22:22:37,211 INFO org.apache.hadoop.service.AbstractService: Service org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl failed in state INITED; cause: java.lang.NullPointerException.",0
+YARN-2816,at org.apache.hadoop.service.AbstractService.init(AbstractService.java:163).,0
+YARN-2816,at org.apache.hadoop.service.AbstractService.init(AbstractService.java:163).,0
+YARN-2816,at org.apache.hadoop.service.CompositeService.serviceInit(CompositeService.java:107).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl.recover(ContainerManagerImpl.java:252).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl.recoverContainer(ContainerManagerImpl.java:289).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.containermanager.ContainerManagerImpl.serviceInit(ContainerManagerImpl.java:235).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.NodeManager.initAndStartNodeManager(NodeManager.java:445).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.NodeManager.main(NodeManager.java:492).,0
+YARN-2816,at org.apache.hadoop.yarn.server.nodemanager.NodeManager.serviceInit(NodeManager.java:250).,0
+YARN-2816,java.lang.NullPointerException.,0
+YARN-2816,NM fail to start with NPE during container recovery.. We saw the following crash happen:.,0
+YARN-2816,The NullPointerException at the following code cause NM shutdown.,0
+YARN-2816,The reason is some DB files used in NMLeveldbStateStoreService are accidentally deleted to save disk space at /tmp/hadoop-yarn/yarn-nm-recovery/yarn-nm-state.,-1
+YARN-2816,This leaves some incomplete container record which don't have CONTAINER_REQUEST_KEY_SUFFIX(startRequest) entry in the DB.,0
+YARN-2816,"When container is recovered at ContainerManagerImpl#recoverContainer, .",0
+YARN-2823,2.6.0.,0
+YARN-2823,A 3-node cluster with RM HA enabled.,0
+YARN-2823,After some time the RMs went down and would not come back up anymore.,-1
+YARN-2823,Branch:.,0
+YARN-2823,Environment: .,0
+YARN-2823,Following is the NPE we see in both the RM logs.. All the logs for this 3-node cluster has been uploaded.,0
+YARN-2823,The HA setup went pretty smooth (used Ambari) and then installed HBase using Slider.,0
+YARN-2834,Resource manager failed after restart.,0
+YARN-2846,.,0
+YARN-2846,"After NM restart again, this container is recovered as COMPLETE state but exit code is LOST (154) - cause this (AM) container get killed later.. We should get rid of recording the exit code of running containers if detecting process is interrupted.",-1
+YARN-2846,"In reacquireContainer() of ContainerExecutor.java, the while loop of checking container process (AM container) will be interrupted by NM stop.",0
+YARN-2846,"Later, the IOException will be caught in upper call (RecoveredContainerLaunch.call()) and the ExitCode (by default to be LOST without any setting) get persistent in NMStateStore.",0
+YARN-2846,The exception is like below:.,0
+YARN-2846,The IOException get thrown and failed to generate an ExitCodeFile for the running container.,0
+YARN-2846,The NM restart work preserving feature could make running AM container get LOST and killed during stop NM daemon.,-1
+YARN-2931,Example error,0
+YARN-2931,This causes a PublicLocalizer to fail until getInitializedLocalDirs is called due to some LocalizeRunner for private localization..,0
+YARN-2931,"When the data directory is cleaned up and NM is started with existing recovery state, because of YARN-90, it will not recreate the local dirs..",0
+YARN-3351,"a) setup RM HA and ensure the first RM is not active,.",0
+YARN-3351,"After YARN-2713, the AppMaster link is broken in HA.",0
+YARN-3351,b) run a long sleep job and view the tracking url on the RM applications page.,0
+YARN-3351,The log and full stack trace is shown below,0
+YARN-3351,To repro .,0
+YARN-3369,.,0
+YARN-3369,"{color:red} *2015-03-17 14:14:04,758 INFO org.apache.hadoop.yarn.server.resourcemanager.ResourceManager: Exiting, bbye..*{color} {quote}",0
+YARN-3369,"{quote}2015-03-17 14:14:04,757 FATAL org.apache.hadoop.yarn.server.resourcemanager.ResourceManager: Error in handling event type NODE_UPDATE to the scheduler.",0
+YARN-3369,at java.lang.Thread.run(Thread.java:722).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.ResourceManager$SchedulerEventDispatcher$EventProcessor.run(ResourceManager.java:739).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.AppSchedulingInfo.allocate(AppSchedulingInfo.java:270).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.AppSchedulingInfo.allocateOffSwitch(AppSchedulingInfo.java:360).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.AppSchedulingInfo.checkForDeactivation(AppSchedulingInfo.java:383).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.AppSchedulingInfo.decrementOutstanding(AppSchedulingInfo.java:375).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler.allocateContainersToNode(CapacityScheduler.java:1017).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler.handle(CapacityScheduler.java:1059).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler.handle(CapacityScheduler.java:114).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.LeafQueue.assignContainer(LeafQueue.java:1559).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.LeafQueue.assignContainers(LeafQueue.java:816).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.LeafQueue.assignContainersOnNode(LeafQueue.java:1263).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.LeafQueue.assignOffSwitchContainers(LeafQueue.java:1384).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.ParentQueue.assignContainers(ParentQueue.java:449).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.ParentQueue.assignContainersToChildQueues(ParentQueue.java:588).,0
+YARN-3369,at org.apache.hadoop.yarn.server.resourcemanager.scheduler.common.fica.FiCaSchedulerApp.allocate(FiCaSchedulerApp.java:142).,0
+YARN-3369,"If the pointer is null, the RM dies.",0
+YARN-3369,In AppSchedulingInfo.java the method checkForDeactivation() has these 2 consecutive lines:.,0
+YARN-3369,java.lang.NullPointerException.,0
+YARN-3369,the first line calls getResourceRequest and it can return null..,0
+YARN-3369,The second line dereferences the pointer directly without a check..,-1
+YARN-3425,{quote}.,0
+YARN-3425,{quote}.,0
+YARN-3425,"2015-03-31 16:44:13,782 WARN org.apache.hadoop.service.AbstractService: When stopping the service org.apache.hadoop.yarn.nodelabels.CommonNodeLabelsManager : java.lang.NullPointerException.",0
+YARN-3425,and yarn.node-labels.fs-store.root-dir /node-labels.,0
+YARN-3425,at org.apache.hadoop.service.AbstractService.init(AbstractService.java:163).,0
+YARN-3425,at org.apache.hadoop.service.AbstractService.init(AbstractService.java:163).,0
+YARN-3425,at org.apache.hadoop.service.AbstractService.init(AbstractService.java:171).,0
+YARN-3425,at org.apache.hadoop.service.AbstractService.stop(AbstractService.java:221).,0
+YARN-3425,at org.apache.hadoop.service.CompositeService.serviceInit(CompositeService.java:107).,0
+YARN-3425,at org.apache.hadoop.service.ServiceOperations.stop(ServiceOperations.java:52).,0
+YARN-3425,at org.apache.hadoop.service.ServiceOperations.stopQuietly(ServiceOperations.java:80).,0
+YARN-3425,at org.apache.hadoop.yarn.nodelabels.CommonNodeLabelsManager.serviceStop(CommonNodeLabelsManager.java:267).,0
+YARN-3425,at org.apache.hadoop.yarn.nodelabels.CommonNodeLabelsManager.stopDispatcher(CommonNodeLabelsManager.java:261).,0
+YARN-3425,at org.apache.hadoop.yarn.server.resourcemanager.ResourceManager$RMActiveServices.serviceInit(ResourceManager.java:556).,0
+YARN-3425,at org.apache.hadoop.yarn.server.resourcemanager.ResourceManager.createAndInitActiveServices(ResourceManager.java:984).,0
+YARN-3425,at org.apache.hadoop.yarn.server.resourcemanager.ResourceManager.main(ResourceManager.java:1207).,0
+YARN-3425,at org.apache.hadoop.yarn.server.resourcemanager.ResourceManager.serviceInit(ResourceManager.java:251).,0
+YARN-3425,Configure yarn.node-labels.enabled to true .,0
+YARN-3425,java.lang.NullPointerException.,0
+YARN-3425,Null check missing during stop,0
+YARN-3425,Start resource manager without starting DN/NM.,0
+YARN-3493,1,0
+YARN-3493,2,0
+YARN-3493,3,0
+YARN-3493,4,0
+YARN-3493,5,0
+YARN-3493,Change yarn.nodemanager.resource.memory-mb and yarn.scheduler.maximum-allocation-mb to 4000 in yarn-site.xml.,0
+YARN-3493,Restart RM.,0
+YARN-3493,Restore yarn-site.xml to have yarn.scheduler.maximum-allocation-mb to 2048 before the above job completes.,0
+YARN-3493,RM fails to come up for the following case:.,0
+YARN-3493,RM fails to come up with the below error,0
+YARN-3493,Start a randomtextwriter job with mapreduce.map.memory.mb=4000 in background and wait for the job to reach running state.,0
+YARN-351,But I am not sure if that is the right behavior yet..,-1
+YARN-351,"I feel this is serious enough to be marked as blocker, what do you guys think?",0
+YARN-351,ResourceManager seem to die due to NPE shown below on FairScheduler..,0
+YARN-351,Simple job with multiple tasks on each node triggers NPE in RM..,0
+YARN-351,This is easily reproduced on a cluster with multiple racks and nodes within each rack.,0
+YARN-351,"Without understanding actual workings, I tried to do a null check which looked like it solved problem.",0
+YARN-363,Starting up the proxy server fails with this error:,0
+YARN-3641,.,0
+YARN-3641,Any of services get stopped with exception could cause stopRecoveryStore() get skipped which means levelDB store is not get closed.,0
+YARN-3641,first.,0
+YARN-3641,"If NM' services not get stopped properly, we cannot start NM with enabling NM restart with work preserving.",-1
+YARN-3641,"So next time NM start, it will get failed with exception above.",0
+YARN-3641,The exception is as following:.,0
+YARN-3641,The related code is as below in NodeManager.java:.,0
+YARN-3641,"We can see we stop all NM registered services (NodeStatusUpdater, LogAggregationService, ResourceLocalizationService, etc.)",0
+YARN-3641,We should put stopRecoveryStore(); in a finally block.,0
+YARN-3742,The RM goes down showing the following stacktrace if the ZK client connection fails to be created.,0
+YARN-3742,We should not exit but transition to StandBy and stop doing things and let the other RM take over.,0
+YARN-3753,RM failed to come up with the following error while submitting an mapreduce job.,0
+YARN-3878,# RM is stopped while putting a RMStateStore Event to RMStateStore's AsyncDispatcher.,0
+YARN-3878,# This condition never becomes true and AsyncDispatcher keeps on waiting incessantly for dispatcher event queue to drain till JVM exits.. *Initial exception while posting RM State store event to queue*.,-1
+YARN-3878,*JStack of AsyncDispatcher hanging on stop*.,0
+YARN-3878,.,0
+YARN-3878,"On {{serviceStop}}, we will check if all events have been drained and wait for event queue to drain(as RM State Store dispatcher is configured for queue to drain on stop).",0
+YARN-3878,The sequence of events is as under :.,0
+YARN-3878,"This leads to an Interrupted Exception being thrown.. # As RM is being stopped, RMStateStore's AsyncDispatcher is also stopped.",0
+YARN-3878,We keep on getting below logs,0
+YARN-3896,But the node's heartbeat come before RM succeeded setting the id to 0.,-1
+YARN-3896,The node(10.208.132.153) reconnected with RM.,0
+YARN-3896,"When it registered with RM, RM set its lastNodeHeartbeatResponse's id to 0 asynchronously.",0
+YARN-3917,"Since the user has not configured a specific plugin, any problems with the default resource calculator instantiation should be ignored.",0
+YARN-3963,.,0
+YARN-3963,.,0
+YARN-3963,.,0
+YARN-3963,All these commands will give success when applied again through CLI .,1
+YARN-3963,Also since exclusive=true to false is not supported success is misleading,-1
+YARN-3963,Currently as per the code in {{CommonNodeLabelManager#addToClusterNodeLabels}} when we add same nodelabel again event will not be fired so no updation is done.,0
+YARN-4109,Configure node label and load scheduler Page.,0
+YARN-4109,On each reload of the page the below exception gets thrown in logs,0
+YARN-4152,*Analysis*.,0
+YARN-4152,*Event EventType: KILL_CONTAINER sent to absent container container_e51_1442063466801_0001_01_000101*.,0
+YARN-4152,*Logs*.,0
+YARN-4152,Looks like for absent container also {{stopContainer}} is called .,0
+YARN-4152,NM crash during of log aggregation..,0
+YARN-4152,Ran Pi job with 500 container and killed application in between.,0
+YARN-4152,Should skip when {{null==context.getContainers().get(containerId)}},0
+YARN-4167,*Impact Area*: RM failover with wrong configuration,0
+YARN-4167,Configure {{yarn.resourcemanager.container-tokens.master-key-rolling-interval-secs}} mismatching with {{yarn.nm.liveness-monitor.expiry-interval-ms}}.,0
+YARN-4167,On startup NPE is thrown on {{RMActiveServices#serviceStop}}.,0
+YARN-42,NM throws NPE on startup if it doesn't have persmission's on nm local dir's,0
+YARN-4235,This causes a NPE and cause RM to crash as below,0
+YARN-4235,We see NPE if empty groups are returned for a user.,0
+YARN-4288,It will make NM restart get failed.,0
+YARN-4288,We should have a simple fix to allow this register to RM can retry with connection failures.,0
+YARN-4288,"When NM get restarted, NodeStatusUpdaterImpl will try to register to RM with RPC which could throw following exceptions when RM get restarted at the same time, like following exception shows:.",0
+YARN-4321,"As can be seen if HA is not enabled, we neither rethrow NoAuthException nor do we have any logic to increment retries and back out if retries are maxed out.",0
+YARN-4321,"In {{ZKRMStateStore#runWithRetries}}, we have code as under.",0
+YARN-4321,This applies to only branch-2.7 or earlier code..,-1
+YARN-4321,This is because we do not handle NoAuthException properly in branch-2.7 code when HA is not enabled..,0
+YARN-4321,"When a {{NoAuthException}} is thrown in non HA mode(like in the scenario of YARN-4127), RM incessantly keeps on retrying the ZK operation..",0
+YARN-4326,"The timeout originates in ApplicationMaster, where it fails to connect to timeline server, and retry exceeds limits:",0
+YARN-4347,Resource manager fails with NPE while trying to load or recover a finished application.,0
+YARN-4392,.,0
+YARN-4392,.,0
+YARN-4392,"From ATS logs, we would see a large amount of 'stale alerts' messages periodically",0
+YARN-4402,https://builds.apache.org/job/Hadoop-Yarn-trunk/1465/testReport/,0
+YARN-4431,"After retry the maximum times (15 minutes by default), it will send NodeManagerEventType.SHUTDOWN to shutdown NM.",0
+YARN-4431,But NM shutdown will call NodeStatusUpdaterImpl.serviceStop() which will call unRegisterNM() to unregister NM from RM and get retry again (another 15 minutes).,0
+YARN-4431,"If RM down for some reason, NM's NodeStatusUpdaterImpl will retry the connection with proper retry policy.",0
+YARN-4431,This is completely unnecessary and we should skip unRegisterNM when NM get shutdown because of connection issues.,-1
+YARN-4530,"In our cluster, I found that LocalizedResource download failed trigger a NPE Cause the NodeManager shutdown.",0
+YARN-4598,"In our cluster, I found that the container has some problems in state transition锛宼his is my log",0
+YARN-4709,.,0
+YARN-4709,.,0
+YARN-4709,/************************************************************.,0
+YARN-4709,{{/ws/v1/node/containers}} and {{/ws/v1/node/containers/\{\{containerId\}\}}}.,0
+YARN-4709,{color:red}LogType:syslogstderrstdout.,0
+YARN-4709,{panel}.,0
+YARN-4709,=======================================================.,0
+YARN-4709,"2016-02-21 01:44:49,565 INFO \[main\] org.apache.hadoop.mapreduce.v2.app.MRAppMaster: Created MRAppMaster for application appattempt_1455999168135_0002_000001.",0
+YARN-4709,"2016-02-21 01:44:49,914 INFO \[main\] org.apache.hadoop.mapreduce.v2.app.MRAppMaster: .",0
+YARN-4709,"And when we read this XML at client side, reading the value associated with containerLogFiles also leads to one value being syslogstderrstdout because both parent and child tags are same.",0
+YARN-4709,But going with former as of now as we do not specify XmlElementWrapper for lists at most of the places in our code.,0
+YARN-4709,But this can only be done at class level.,-1
+YARN-4709,Container: container_e31_1455999168135_0002_01_000001.,0
+YARN-4709,Following exception is thrown when we run below command.. {panel}.,0
+YARN-4709,"Hence, to fix it we can remove XmlElementWrapper annotation for containerLogFiles list.. Another solution would be to wrap the list inside another class..",0
+YARN-4709,Ideally the JSON output should be as under.. We can indicate in the JAXB context to ignore the outer wrapper while marshalling to JSON.,-1
+YARN-4709,"If we do so for ContainerInfo, it would break backward compatibility..",0
+YARN-4709,java.lang.Exception: Cannot find this log on the local disk.. End of LogType:syslogstderrstdout{color}.,0
+YARN-4709,Log Contents:.,0
+YARN-4709,Log Contents:.,0
+YARN-4709,Log Upload Time:Sun Feb 21 01:44:55 +0530 2016.,0
+YARN-4709,Log Upload Time:Sun Feb 21 01:44:55 +0530 2016.,0
+YARN-4709,LogType:syslog.,0
+YARN-4709,"Moreover, as we use XMLElementWrapper, the JSON generated is as under.",0
+YARN-4709,root@varun-Inspiron-5558:/opt1/hadoop3/bin# ./yarn logs -applicationId application_1455999168135_0002 -am ALL -logFiles ALL.,0
+YARN-4709,stdout is picked up.,0
+YARN-4709,This is because child containerLogsFiles entries are treated as a key-value pair(map) and hence only last entry i.e.,0
+YARN-4709,This is because we annotate containerLogFiles list with XmlElementWrapper which generates XML output as under.,0
+YARN-4709,This JSON cannot be properly parsed by JSON parser(as a list).,-1
+YARN-4709,This leads to the exception.,0
+YARN-4709,This makes output unusable.,-1
+YARN-4709,This was found while working on YARN-4517.,0
+YARN-4709,This will be an issue for 2 REST endpoints i.e.,0
+YARN-4743,{{FairShareComparator}} is not transitive.. We get NaN when memorySize=0 and weight=0.,0
+YARN-4743,"Actually, this bug found in 2.6.0-cdh5.4.7.",0
+YARN-476,"As described in MAPREDUCE-4570, this is something that naturally occurs in the process of monitoring processes via procfs.",0
+YARN-476,It's uninteresting at best and can confuse users who think it's a reason their job isn't running as expected when it appears in their logs.. We should either make this DEBUG or remove it entirely.,-1
+YARN-476,ProcfsBasedProcessTree has a habit of emitting not-so-helpful messages such as the following:.,0
+YARN-4762,Seeing this exception and the NMs crash.,0
+YARN-4763,Application state is NEW the apptempts can be empty as per inital analysis,0
+YARN-4880,"But down the line , this variables are used which causes NPE.",-1
+YARN-4880,I tested by passing program arguments which result in NPE.,0
+YARN-4880,There are 2 places variable {{curatorTestingServer}} used that need to be guarded with null check.,0
+YARN-4880,"While going throw TestZKRMStateStorePerf class , found that we are not initializing variable {{TestingServer curatorTestingServer}} if real zookeeper cluster are passed to utility.",0
+YARN-4882,.,0
+YARN-4882,.,0
+YARN-4882,"Even though log roll back is 50 or 100, in a short period all these logs will be rolled out and all the logs contains only RM switching information that too recovering applications!!.",-1
+YARN-4882,I suggest at least completed applications recovery should be logged as DEBUG.,0
+YARN-4882,"I think for recovering completed applications no need to log as INFO, rather it can be made it as DEBUG.",-1
+YARN-4882,So for each switch 10K*6=60K lines will be added which is not useful I feel..,-1
+YARN-4882,The main problem is missing important information's from the logs before RM unstable.,0
+YARN-4882,"The problem seen from large cluster is if any issue happens during RM start up and continuously switching , then  RM logs are filled with most with recovering applications only.",-1
+YARN-4882,"There are 6 lines are logged for 1 applications as I shown in below logs, then consider RM default value for max-completed applications is 10K.",0
+YARN-4984,"Due to YARN-4325, many stale applications still exists in NM state store and get recovered after NM restart.",0
+YARN-4984,Exception is:,0
+YARN-4984,"The app initiation will get failed due to token invalid, but exception is swallowed and aggregator thread is still created for invalid app..",-1
+YARN-5098,Environment : HA cluster.,0
+YARN-5098,Yarn application logs for long running application could not be gathered because Nodemanager failed to talk to HDFS with below error.,0
+YARN-5136,move app cause rm exit,0
+YARN-5379,testWriteApplicationToHBase()}} test seems to fail intermittently:.,0
+YARN-5379,The {{TestHBaseTimelineStorage.,-1
+YARN-5379,The stdout output:,0
+YARN-5545,1,0
+YARN-5545,2,0
+YARN-5545,3,0
+YARN-5545,./yarn jar ../share/hadoop/mapreduce/hadoop-mapreduce-client-jobclient-3.0.0-alpha2-SNAPSHOT-tests.jar sleep -Dmapreduce.job.node-label-expression=labelx -Dmapreduce.job.queuename=default -m 1 -r 1 -mt 10000000 -rt 1,0
+YARN-5545,Cap total applications across the queue hierarchy based on existing max app calculation.,0
+YARN-5545,Configure capacity scheduler .,0
+YARN-5545,Introduce a new configuration to take default max apps per queue irrespective of the queue capacity configuration.,0
+YARN-5545,Issues as part of Max apps in Capacity scheduler:.,0
+YARN-5545,Steps to reproduce Issue 3 : .,0
+YARN-5545,Submit application as below.,0
+YARN-5545,"When the capacity configuration of the default partition is ZERO but queue has capacity for other partition then app is not getting submitted, though app is submitted in other partition.",-1
+YARN-5545,yarn.scheduler.capacity.root.default.accessible-node-labels.labelx.capacity=50.,0
+YARN-5545,yarn.scheduler.capacity.root.default.capacity=0.,0
+YARN-5545,yarn.scheduler.capacity.root.queue1.accessible-node-labels.labelx.capacity=50.,0
+YARN-5594,The reason of this problem is that we use different formats of files /var/mapr/cluster/yarn/rm/system/FSRMStateRoot/RMDTSecretManagerRoot/RMDelegationToken* in these hadoop versions..,0
+YARN-5594,This fix handle old data format during RM recover if InvalidProtocolBufferException occures.,0
+YARN-5594,We've got that error after upgrade cluster from v.2.5.1 to 2.7.0..,0
+YARN-5837,And a full report like this:.,0
+YARN-5837,"And when you try to get the full report on the now ""-1"" node, you get an NPE:",0
+YARN-5837,"If you decommission a node, the {{yarn node}} command shows it like this:.",0
+YARN-5837,"If you then restart the ResourceManager, you get this report:.",0
+YARN-5918,Allocate request failure during Opportunistic container allocation when nodemanager is lost,0
+YARN-6054,However I'd posit that the TimelineServer should have graceful degradation instead of failing to start at all.,-1
+YARN-6054,Ideally we shouldn't have any missing state files.,-1
+YARN-6054,We encountered an issue recently where the TimelineServer failed to start because some state files went missing..,0
+YARN-6068,The exception log is as following:,0
+YARN-6072,# AdminService.,0
+YARN-6072,# EmbeddedElector.,0
+YARN-6072,During resource manager service start() .EmbeddedElector starts first and invokes  {{AdminService#refreshAll()}} but {{AdminService#serviceStart()}} happens after {{ActiveStandbyElectorBasedElectorService}} service start is complete.,0
+YARN-6072,Resource manager is unable to start in secure mode.,0
+YARN-6072,ResourceManager services are added in following order.,0
+YARN-6072,So {{AdminService#server}} will be *null* which causes  {{AdminService#refreshAll()}}  to fail,0
+YARN-6102,1,0
+YARN-6102,2,0
+YARN-6102,3,0
+YARN-6102,"{{this.rmContext.getDispatcher().getEventHandler().handle(nodeStatusEvent);}} if RM failover is called, the dispatcher is reset.",0
+YARN-6102,"for {{STATUS_UPDATE}} active service event, when the service is yet to forward the event to RM dispatcher but a failover is called and dispatcher reset is between {{resetDispatcher();}} & {{createAndInitActiveServices();}}",0
+YARN-6102,"In {{ResourceTrackerService.nodeHeartbeat}}, before passing to dispatcher call RM failover.",0
+YARN-6102,"In RM Failover, current active will reset dispatcher @reinitialize i.e ( {{resetDispatcher();}} + {{createAndInitActiveServices();}} ).",0
+YARN-6102,"Now between {{resetDispatcher();}} and {{createAndInitActiveServices();}} , the {{ResourceTrackerService.nodeHeartbeat}} invokes dipatcher.",0
+YARN-6102,Send Node heartbeat to {{ResourceTrackerService}}.,0
+YARN-6102,So event order will look like.,0
+YARN-6102,The new dispatcher is however first started and then the events are registered at {{org.apache.hadoop.yarn.server.resourcemanager.ResourceManager.reinitialize(boolean)}}.,0
+YARN-6102,"The same stack i was also noticed in {{TestResourceTrackerOnHA}} exits abnormally, after some analysis, i was able to reproduce.. Once the nodeHeartBeat is sent to RM, inside {{org.apache.hadoop.yarn.server.resourcemanager.ResourceTrackerService.nodeHeartbeat(NodeHeartbeatRequest)}}, before sending it to dispatcher through.",-1
+YARN-6102,"This will cause the above error as at point of time when {{STATUS_UPDATE}} event is given to dispatcher in {{ResourceTrackerService}} , the new dispatcher(from the failover) may be started but not yet registered for events.",0
+YARN-6102,"Using same steps(with pausing JVM at debug), i was able to reproduce this in production cluster also.",0
+YARN-6117,The webapp directory for the SharedCacheManager is missing and the SCM fails to start up with the following:,0
+YARN-6448,It breaks the order in comparison if nodes changes while sorting.,0
+YARN-6448,YARN-4719 remove the lock in continuous scheduling while sorting nodes.,0
+YARN-6534,"In a non-secured cluster, RM get failed consistently due to TimelineServiceV1Publisher tries to init TimelineClient with SSLFactory without any checking on if https get used.. CC [~rohithsharma] and [~gtCarrera9]",0
+YARN-6643,.,0
+YARN-6643,"After some digging, it turns out that it's due to a port conflict with the embedded ZooKeeper in the tests.",0
+YARN-6643,Final state is STOPPED".,0
+YARN-6643,"It results in an error like this, causing the RM to be unable to start, and hence the original error message in the test failure:",0
+YARN-6643,"the default port for the RM is 8032, so you'd use 18032 and 28032)..",0
+YARN-6643,"The embedded ZooKeeper uses {{ServerSocketUtil#getPort}} to choose a free port, but the RMs are configured to 10000 + <default-port> and 20000 + <default-port> (e.g.",-1
+YARN-6643,We've seen various tests in {{TestRMFailover}} fail very rarely with a message like "org.apache.hadoop.yarn.exceptions.YarnRuntimeException: java.io.IOException: ResourceManager failed to start.,0
+YARN-6643,"When I was able to reproduce this, I saw that ZooKeeper was using port 18033, which is 10000 + 8033, the default RM Admin port.",0
+YARN-6649,The root cause was YARN-6654.,0
+YARN-6649,This jira is to handle object decoding to prevent sending back internal server errors to the client and instead respond with a partial message instead.,0
+YARN-6649,"When Using tez ui (makes REST api calls to timeline service REST api), some calls were coming back as 500 internal server error.",0
+YARN-6683,Below code already gets the RMApp instance and then send an event to RMApp to update the collector address.,0
+YARN-6683,"Instead of updating via event, it could just update via a method of RMApp.",-1
+YARN-6683,"This also avoids state-machine changes.. Also, is there any implications that COLLECTOR_UPDATE happened at KILLED state ?",-1
+YARN-6714,"Currently in async-scheduling mode of CapacityScheduler, after AM failover and unreserve all reserved containers, it still have chance to get and commit the outdated reserve proposal of the failed app attempt.",-1
+YARN-6714,"This problem happened on an app in our cluster, when this app stopped, it unreserved all reserved containers and compared these appAttemptId with current appAttemptId, if not match it will throw IllegalStateException and make RM crashed.. Error log:.",0
+YARN-6714,"When async-scheduling enabled, CapacityScheduler#doneApplicationAttempt and CapacityScheduler#tryCommit both need to get write_lock before executing, so we can check the app attempt state in commit process to avoid committing outdated proposals.",0
+YARN-6798,"During an upgrade, all NMs died after upgrading a C6 cluster from alpha2 to alpha4.",0
+YARN-6798,"YARN-5049 bumped the version for the NM to 2.0.     private static final Version CURRENT_VERSION_INFO = Version.newInstance(2, 0);.",0
+YARN-6798,"YARN-6703 rolled back the state store version number for the RM from 2.0 to 1.4.. YARN-6127 bumped the version for the NM to 3.0.     private static final Version CURRENT_VERSION_INFO = Version.newInstance(3, 0);.",0
+YARN-6948,"When I send kill command to a running job, I check the logs and find the Exception:",0
+YARN-699,"ContainerManagerImpl expected containerId to be equal to the remote UGI and since this was not the case, failed the authorization:",-1
+YARN-699,Just run into this.,0
+YARN-699,Looks like YARN-617 regressed TestUnmanagedAMLauncher.. From the test log:.,0
+YARN-7118,ApplicationHistoryService REST Api returns NullPointerException.,0
+YARN-7118,TimelineServer logs shows below.,0
+YARN-715,Looks like this is related to YARN-617.,0
+YARN-715,Tests are timing out.,0
+YARN-7249,.,0
+YARN-7249,1) A node is removing from scheduler.. 2) A container running on the node is being preempted.,0
+YARN-7249,3) A rare race condition causes scheduler pass a null node to leaf queue..,0
+YARN-7249,Fix of the problem is to add a null node check inside CapacityScheduler.. Stack trace:.,0
+YARN-7249,This is an issue only existed in 2.8.x,0
+YARN-7249,This issue could happen when 3 conditions satisfied:.,0
+YARN-7308,{{TestApplicationACLs}} fails when using FairScheduler:.,0
+YARN-7308,There's a bunch of messages like this in the output:,0
+YARN-7382,"sleep) and an RM failover occurs, once the maps gets to 100%, the now active RM will crash due to:.",0
+YARN-7382,This leaves the cluster with no RMs!,-1
+YARN-7382,While running an MR job (e.g.,0
+YARN-7511,1,0
+YARN-7511,2,0
+YARN-7511,Container was running and ContainerManagerImpl#localize was called for this container.,0
+YARN-7511,Error log:.,0
+YARN-7511,I think we can fix this problem through ensuring that request is not null before remove it.,0
+YARN-7511,Localization failed in ResourceLocalizationService$LocalizerRunner#run and sent out ContainerResourceFailedEvent with null LocalResourceRequest.. 3.,0
+YARN-7511,NPE when ResourceLocalizationFailedWhileRunningTransition#transition --> container.resourceSet.resourceLocalizationFailed(null).,0
+YARN-7511,Reproduce this problem:.,0
+YARN-7692,1,0
+YARN-7692,2,0
+YARN-7692,3,0
+YARN-7692,------------------.,0
+YARN-7692,"A cluster is created, no ACLs are included.",0
+YARN-7692,"But Resource Manager also goes down when it tries to recover previous applications and fails to recover them.. Below is the exception seen,",-1
+YARN-7692,"Do not include the user, 'user_a' in this ACL.. 4.",0
+YARN-7692,Enable ACLs and create a priority ACL entry via the property yarn.scheduler.capacity.priority-acls.,0
+YARN-7692,Submit a job with the 'user_a'.,0
+YARN-7692,Submit jobs with an existing user say 'user_a'.,0
+YARN-7692,Test scenario.,0
+YARN-7692,The observed behavior in this case is that the job is rejected as 'user_a' does not have the permission to run the job which is expected behavior.,0
+YARN-7737,But prelaunch.err (and prelaunch.out) are created in the first log dir (in {{ContainerLaunch#call}}:,-1
+YARN-7737,"containerLogDir is picked on container launch via {{LocalDirAllocator#getLocalPathForWrite}}, which is where it looks for {{prelaunch.err}} when the container fails.",0
+YARN-7737,Hit this exception when a container failed:.,0
+YARN-7786,"Before launching the ApplicationMaster, send kill command to the job, then some Null pointer appears:",0
+YARN-7818,.,0
+YARN-7818,1) Run Dshell Application.,0
+YARN-7818,2) Find out host where AM is running.,0
+YARN-7818,3) Find Containers launched by application.,0
+YARN-7818,4) Restart NM where AM is running.,0
+YARN-7818,5) Validate that new attempt is not started and containers launched before restart are in RUNNING state..,0
+YARN-7818,"In this test, step#5 fails because containers failed to launch with error 143",0
+YARN-7818,steps:.,0
+YARN-7890,"While running a recent build of trunk, I saw the following:",0
+YARN-7942,"Also, the destroy call succeeds.",1
+YARN-7942,"Even with sasl:rm:cdrwa set on the ZK node (from the registry system accounts property), the RM fails to remove the node with the below error.",-1
+YARN-7962,[https://github.com/apache/hadoop/blob/69fa81679f59378fd19a2c65db8019393d7c05a2/hadoop-yarn-project/hadoop-yarn/hadoop-yarn-server/hadoop-yarn-server-resourcemanager/src/main/java/org/apache/hadoop/yarn/server/resourcemanager/security/DelegationTokenRenewer.java].,0
+YARN-7962,"Please update so that the鑱絳{serviceStop}}鑱絤ethod grabs the鑱絳{serviceStateLock}}鑱絘nd sets鑱絳{isServiceStarted}}鑱絫o鑱絖false_, before shutting down the鑱絳{renewerService}}鑱絫hread pool,鑱絫o avoid this condition.",0
+YARN-7962,What I think is going on here is that the鑱絳{serviceStop}}鑱絤ethod is not setting the鑱絳{isServiceStarted}}鑱絝lag to 'false'..,-1
+YARN-8035,"As part of this initialization, a tag called {{ContainerPid}}, whose value is the鑱絇ID for the container, is鑱絧opulated for鑱絫he metrics associated with the container.",0
+YARN-8035,"For resource monitoring, {{ContainersMonitorImpl}} will obtain the new PID post relaunch and initialize the process tree monitoring.",0
+YARN-8035,"However, it's unclear how this tag might be being used by other systems.",-1
+YARN-8035,"If the prior container failed after its process started, the original PID will already be populated for the container, resulting in the {{MetricsException}} below.. {{MetricsRegistry}} provides a {{tag}} method that allows for updating the value of an existing tag.",0
+YARN-8035,I'm not finding any usage in Hadoop itself.,-1
+YARN-8035,"In the case of a container relaunch event, the container ID is reused but a new process is spawned.",-1
+YARN-8035,"Updating the value ensures that the PID associated with container is the currently running process, which appears to be an appropriate fix.",1
+YARN-8116,2) Launch distributed shell application multiple times.,0
+YARN-8116,3) restart NM.,0
+YARN-8116,Nodemanager fails to start with below error.,0
+YARN-8116,Steps followed.. 1) Update nodemanager debug delay config.,0
+YARN-8202,*This is because鑱給rg.apache.hadoop.yarn.server.resourcemanager.scheduler.SchedulerUtils#validateResourceRequest does not take resource units into account.*.,0
+YARN-8202,.,0
+YARN-8202,"and I have one node with 5GB of resource1, I get the following exception on every second and the job hangs:.",0
+YARN-8202,and I still have 5GB of resource1 on one node then the job runs successfully.. 鑱.,1
+YARN-8202,"However, if I start a job with arguments:鑱.",-1
+YARN-8202,"I also tried a third鑱絡ob run, when I request 1GB of resource1 and I have no nodes with any amount of resource1, then I restart the node with 5GBs of resource1, the job ultimately completes, but just after the node with enough resources registered in RM, which is the desired behaviour.",-1
+YARN-8202,When I execute a pi job with arguments:鑱.,0
+YARN-8211,Yarn registry dns server is constantly getting BufferUnderflowException.,0
+YARN-8223,But loading the same jar from a location on HDFS fails with a ClassNotFoundException..,-1
+YARN-8223,It doesn't have the URL/filename of the jar file specified in the config.,0
+YARN-8223,"Loading an auxiliary jar from a local location on a node manager works as expected,.",0
+YARN-8223,The difference between the 2 logs is the classpath variable in the 1st line of the log is empty in the HDFS case.,0
+YARN-8236,.,0
+YARN-8236,cc [~gsaha] [~csingh],0
+YARN-8236,Stack trace.,0
+YARN-8331,"kill event was sent to this container, state : SCHEDULED->KILLING->DONE.",0
+YARN-8331,Then ContainerLaunch send CONTAINER_LAUNCHED event and start the container processes.,0
+YARN-8331,These absent container processes will not be cleaned up anymore.,-1
+YARN-8331,"When a container is launching, in ContainerLaunch#launchContainer, state is SCHEDULED,.",0
+YARN-8357,Line 972 in \{{ServiceClient}} returns a service with state \{{null}} which is why there is a NPE.,0
+YARN-8383,TimelineServer 1.5 start fails with NoClassDefFoundError.,0
+YARN-8403,( It does not show up in AM log) .,0
+YARN-8403,.,0
+YARN-8403,"Ideally, exception should be printed in ERROR log level.",-1
+YARN-8403,Some of the container execution related stack traces are printing in INFO or WARN level.,0
+YARN-8403,These logs are only present in NM.,-1
+YARN-8403,These stacktraces are in WARN or INFO level.,0
+YARN-8409,.,0
+YARN-8409,"In RM-HA env, kill ZK leader and then perform RM failover.",0
+YARN-8409,"Sometimes, active RM gets NPE and fail to come up successfully",0
+YARN-8629,"When an application failed to launch container successfully, the cleanup of container also failed with below message.",0
+ZOOKEEPER-1340,"(this is what we do for other such user operations, e.g.",0
+ZOOKEEPER-1340,"Multi operations run by users are generating ERROR level messages in the server log even though they are typical user level operations that are not in any way impacting the server, example:.",-1
+ZOOKEEPER-1340,nonode),0
+ZOOKEEPER-1340,This is misleading.,-1
+ZOOKEEPER-1340,We should demote these messages to INFO level at the highest.,0
+ZOOKEEPER-1781,"2013-10-02 18:09:07,600 [myid:1] - ERROR [SyncThread:1:SyncRequestProcessor@151] - Severe unrecoverable error, exiting.",0
+ZOOKEEPER-1781,at java.util.Random.nextInt(Random.java:300).,0
+ZOOKEEPER-1781,at org.apache.zookeeper.server.SyncRequestProcessor.run(SyncRequestProcessor.java:93).,0
+ZOOKEEPER-1781,"But, it may be better to mention this restriction in documentation or add a validation in the source code.",-1
+ZOOKEEPER-1781,I think this supposition is not bad because snapCount = 1 is not realistic setting....,0
+ZOOKEEPER-1781,"If snapCount is set to 1, ZooKeeper Server can start but it fails with the below error:.",-1
+ZOOKEEPER-1781,"In source code,  it maybe be supposed that snapCount must be 2 or more:.",0
+ZOOKEEPER-1781,java.lang.IllegalArgumentException: n must be positive.,0
+ZOOKEEPER-1799,"After authentication fails, the client connection is closed at the server side so does the session right before test case calls JMXEnv.ensureAll  to verify the session.",0
+ZOOKEEPER-1799,Below are the log events show the sequence and you can see the session was already closed before client JMXEnv.ensureAll.,0
+ZOOKEEPER-1799,org.apache.zookeeper.test.SaslAuthFailDesignatedClientTest.testAuth often fails on SUSE with the following error stack trace:.,0
+ZOOKEEPER-1799,The reason is that this is a negative test.,0
+ZOOKEEPER-1862,"After the socket closure, when the client tries to read a line of text will throw java.net.SocketException..",0
+ZOOKEEPER-1862,Assume after the socket closure the testcase is trying to read the text using the previously established socket and is resulting in SocketException.,0
+ZOOKEEPER-1862,During connection expiry server will close the socket channel connection.,0
+ZOOKEEPER-1862,In the failure scenario the testcase has established a socket connection and entering into the sleep.,0
+ZOOKEEPER-1862,In the meantime the server side expiration would happen and closing the socket channel.,0
+ZOOKEEPER-1862,ServerCnxnTest#testServerCnxnExpiry test case is failing in the trunk build with the following exception.,0
+ZOOKEEPER-1862,There is a race between the reading the socket in the client side and socket closure in server side.,0
+ZOOKEEPER-1862,When analyzing the possible cause of the failure is:.,0
+ZOOKEEPER-1864,The exact additional task performed that we need in parseProperties is the dynamic config backwards compatibility check:,0
+ZOOKEEPER-1864,The reason that this happens is because QuorumPeerConfig:parseProperties only peforms a subset of what 'QuorumPeerConfig:parse(String path)' does.,0
+ZOOKEEPER-1864,"This bug was found when using ZK 3.5.0 with curator-test 2.3.0.. curator-test is building a QuorumPeerConfig from a Properties object and then when we try to run the quorum peer using that configuration, we get an NPE:.",-1
+ZOOKEEPER-1898,Successful:,0
+ZOOKEEPER-1898,Unsuccessful:.,0
+ZOOKEEPER-1898,zookeeper-cli always return "0" as exit code whether the command has been successful or not.. Ex:.,-1
+ZOOKEEPER-2924,#1 Wrap cleanup code block with finally.,0
+ZOOKEEPER-2924,#2 Use JUnit's Before-After methods for initialization and cleanup.,0
+ZOOKEEPER-2924,From https://builds.apache.org/job/ZooKeeper_branch34_openjdk7/1682/.,0
+ZOOKEEPER-2924,"Same issue happens in jdk8 and jdk9 builds as well.. Issue has already been fixed by https://issues.apache.org/jira/browse/ZOOKEEPER-2484 , but I believe that the root cause here is that test startup / cleanup code is included in the tests instead of using try-finally block or Before-After methods.. As a consequence, when exception happens during test execution, ZK test server doesn't get shutdown properly and still listening on the port bound to the test class.. As mentioned above there could be 2 approaches to address this:.",-1
+ZOOKEEPER-2924,Test #2 where port is already in use:,0
+ZOOKEEPER-2924,Test where original issue happens:.,0

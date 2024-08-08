@@ -1,0 +1,191 @@
+Filename,Log_Level,Tools_Senti_Emo,Manual_Senti_Emo,Concerns
+AMQ-3176,"INFO
+INFO","Anger, Fear, Surprise","Fear, Surprise",Concerning both runtime behaviour of software and logs
+AMQ-6152,"DEBUG
+TRACE
+TRACE
+TRACE
+TRACE
+TRACE
+TRACE
+DEBUG
+INFO","Anger, Fear",Surprise,Concerning both runtime behaviour of software and logs
+AMQ-6343,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO","Fear, Surprise",Surprise,Concerning runtime behaviour of software with logs as evidence
+HADOOP-12622,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO","Anger, Fear, Joy, Sadness",Sadness,Concerning logging statements
+HADOOP-12655,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO",Fear,Surprise,Concerning runtime behaviour of software with logs as evidence
+HADOOP-5539,"INFO
+INFO","Anger, Fear, Surprise","Fear, Surprise, Sadness",Concerning runtime behaviour of software with logs as evidence
+HDFS-3326,"INFO
+INFO",Surprise,Surprise,Concerning logging statements
+HDFS-3828,"INFO
+INFO
+INFO",Fear,Surprise,Concerning both runtime behaviour of software and logs
+HDFS-6178,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO","Anger, Fear, Love, Surprise","Fear, Surprise",Concerning both runtime behaviour of software and logs
+HDFS-6797,"INFO
+INFO
+INFO
+INFO
+INFO","Anger, Surprise","Love, Surprise, Sadness",Concerning logging statements
+HDFS-9624,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO",Anger,"Surprise, Sadness",Concerning runtime behaviour of software with logs as evidence
+HIVE-15309,"/
+INFO","Anger, Surprise","Sadness, Surprise",Concerning logging statements
+STORM-1941,"/
+/
+DEBUG
+INFO","Fear, Surprise",Surprise,Concerning runtime behaviour of software with logs as evidence
+STORM-2568,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO
+INFO","Anger, Fear, Love, Surprise",Surprise,Concerning runtime behaviour of software with logs as evidence
+YARN-1274,"INFO
+INFO
+INFO",Anger,Surprise,Concerning both runtime behaviour of software and logs
+YARN-1661,"INFO
+INFO
+INFO",Anger,Surprise,Concerning both runtime behaviour of software and logs
+YARN-1675,"DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG
+DEBUG",Fear,Surprise,Concerning runtime behaviour of software with logs as evidence
+YARN-476,"INFO
+INFO
+INFO","Anger, Joy",Sadness,Concerning logging statements
+YARN-4882,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO",Fear,"Fear, Surprise, Sadness",Concerning logging statements
+YARN-2617,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO","-1
+-2
+-1
+-2
+-3
+-1
+-1
+-1",Surprise,Concerning both runtime behaviour of software and logs
+YARN-3896,"INFO
+INFO
+INFO
+INFO
+INFO
+INFO","-1
+-1
+-3",Surprise,Concerning both runtime behaviour of software and logs
+YARN-3963,"INFO
+INFO
+INFO
+INFO","-1
+-1
+-1
+-1
+-1
+-2","Joy, Sadness",Concerning both runtime behaviour of software and logs
